@@ -1,4 +1,4 @@
-package com.pilpil.comment.domain;
+package com.pilpil.comment.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

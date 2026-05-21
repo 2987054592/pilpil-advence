@@ -1,4 +1,4 @@
-package com.pilpil.web.entity.dto;
+package com.pilpil.comment.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserDto {
-    private String email;
-    private String password;
-    private String code;
+public class UserInfo {
+    private Long id;
+    private String nickName;
+    private String avatar;
 }

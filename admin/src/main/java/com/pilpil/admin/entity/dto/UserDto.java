@@ -1,4 +1,4 @@
-package com.pilpil.web.entity.dto;
+package com.pilpil.admin.entity.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,5 +12,4 @@ import lombok.NoArgsConstructor;
 public class UserDto {
     private String email;
     private String password;
-    private String code;
 }

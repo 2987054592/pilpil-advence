@@ -1,4 +1,4 @@
-package com.pilpil.web.enums;
+package com.pilpil.comment.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -7,11 +7,12 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum StatusType {
-    NORMAL(0, "正常"),
-    BAN(1, "封禁");
+public enum SexType {
+    MALE(1,"男"),
+    FEMALE(0,"女"),
+    UNKNOWN(2,"未知");
     @EnumValue
-    private final Integer code;
+    private final int sex;
     @JsonValue
-    private final String message;
+    private final String desc;
 }

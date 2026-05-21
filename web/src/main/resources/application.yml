@@ -28,6 +28,6 @@ mybatis-plus:
     db-config:
       update-strategy: not_null
       id-type: assign_id
+host: 192.168.150.102
 knife4j:
   enable: true
-host: 192.168.150.102
