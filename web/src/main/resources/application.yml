@@ -17,6 +17,10 @@ spring:
     password: guest
   elasticsearch:
     uris: http://${host}:9200
+  servlet:
+    multipart:
+      max-file-size: 10GB
+      max-request-size: 10GB
 server:
   port: 8080
 mybatis-plus:
@@ -31,3 +35,9 @@ mybatis-plus:
 host: 192.168.150.102
 knife4j:
   enable: true
+aliyun :
+  oss:
+    endpoint: https://oss-cn-beijing.aliyuncs.com
+    bucketName: javazou
+    region : cn-beijing
+

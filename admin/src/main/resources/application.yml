@@ -2,7 +2,7 @@ spring:
   application:
     name: admin
   datasource:
-    url: jdbc:mysql://${host}:3306/pilpil?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&allowMultiQueries=true&tinyInt1isBit=false&allowLoadLocalInfile=true&allowUrlInLocalInfile=true&allowMultiQueries=true&allowPublicKeyRetrieval=true&allowPublicKeyRetrieval=true&allowPublicKeyRetrieval=true&allowPublicKeyRetrieval=true&allowPublicKeyRetrieval=true&allowPublicKeyRetrieval=true&allowPublicKeyRetrieval=true&allowPublicKeyRetrieval=true&allowPublicKeyRetrieval=true&allowPublicKeyRetrieval=true&
+    url: jdbc:mysql://${host}:3306/pilpil?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&allowMultiQueries=true&tinyInt1isBit=false&allowLoadLocalInfile=true&allowUrlInLocalInfile=true&allowMultiQueries=true&allowPublicKeyRetrieval=true&allowPublicKeyRetrieval=true&allowPublicKeyRetrieval=true&allowPublicKeyRetrieval=true&allowPublicKeyRetrieval=true&allowPublicKeyRetrieval=true&allowPublicKeyRetrieval=true&allowPublicKeyRetrieval=true&allowPublicKeyRetrieval=true&
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: root
@@ -31,3 +31,8 @@ mybatis-plus:
 knife4j:
   enable: true
 host: 192.168.150.102
+aliyun:
+  oss:
+    endpoint: https://oss-cn-beijing.aliyuncs.com
+    bucketName: javazou
+    region: cn-beijing

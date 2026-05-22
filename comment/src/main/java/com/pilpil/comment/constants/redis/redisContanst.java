@@ -8,4 +8,8 @@ public interface redisContanst {
     interface Category{
          String CATEGORY_LIST = "CATEGORY:LIST";
     }
+    interface File{
+         String FILE_UPLOAD_PREFIX = "FILE:UPLOAD:";
+         String FILE_EXPIRE_PREFIX = "FILE:EXPIRE:";
+    }
 }

@@ -33,4 +33,8 @@ public class RefreshTokenIntercreptor implements HandlerInterceptor {
         return true;
     }
 
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
+        UserHolder.remove();
+    }
 }
