@@ -2,6 +2,8 @@ package com.pilpil.comment.Interceptor;
 
 import cn.hutool.core.bean.BeanUtil;
 
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.pilpil.comment.entity.UserInfo;
 import com.pilpil.comment.utils.UserHolder;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,12 +25,27 @@ public class RefreshTokenIntercreptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String token = request.getHeader("Authorization");
-        String json = redisTemplate.opsForValue().get(LOGIN_TOKEN_PREFIX + token);
-        UserInfo user = BeanUtil.toBean(json, UserInfo.class);
-        if(user==null){
+        
+        if (token == null || token.isEmpty()) {
+            System.out.println("Token 为空");
             return true;
         }
+        
+        String json = redisTemplate.opsForValue().get(LOGIN_TOKEN_PREFIX + token);
+        
+        if (json == null) {
+            System.out.println("Redis 中找不到 Token: " + token);
+            return true;
+        }
+
+        JSONObject jsonObject = JSONUtil.parseObj(json);
+        UserInfo user = new UserInfo();
+        user.setId(jsonObject.getLong("id"));
+        user.setNickName(jsonObject.getStr("nickName"));
+
         UserHolder.save(user);
+        System.out.println("用户信息已设置: " + user.getId());
+        
         redisTemplate.expire(LOGIN_TOKEN_PREFIX + token, 1L, TimeUnit.DAYS);
         return true;
     }

@@ -15,4 +15,8 @@ public interface exceptionConstants {
         String CATEGORY_NOT_EXIST = "分类不存在";
         String CATEGORY_PARENT_EMPTY = "子分类不能再建分类";
     }
+    interface Video{
+        String VIDEO_NOT_EXIST = "视频不存在";
+        String VIDEO_STATUS_ERROR = "视频未审核或封禁";
+    }
 }

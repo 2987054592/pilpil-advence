@@ -56,7 +56,7 @@ public class FileController {
         return Result.success(partSummaries);
     }
     @PostMapping("/complete")
-    public Result completeUpload(
+    public Result<UploadIniVo> completeUpload(
             @RequestParam String uploadId,
             @RequestParam String ossKey,
             @RequestParam String partETags,
@@ -72,8 +72,14 @@ public class FileController {
             }
             
             fileOperater.completeUpload(uploadId, ossKey, list, fileId);
-
-            return Result.success(fileOperater.getFileUrl(ossKey));
+            UploadIniVo vo = UploadIniVo.builder()
+                    .uploadId(uploadId)
+                    .fileId(fileId)
+                    .ossKey(ossKey)
+                    .url(fileOperater.getFileUrl(ossKey))
+                    .duration(fileOperater.getVideoDurationSeconds(ossKey))
+                    .build();
+            return Result.success(vo);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.error("完成上传失败: " + e.getMessage());

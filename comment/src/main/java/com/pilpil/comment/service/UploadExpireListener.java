@@ -1,6 +1,8 @@
 package com.pilpil.comment.service;
 
 import com.pilpil.comment.constants.redis.redisContanst;
+import com.pilpil.comment.utils.Aliyunossdelte;
+import com.pilpil.comment.utils.Aliyunpojo;
 import com.pilpil.comment.utils.FileOperater;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
@@ -10,18 +12,29 @@ import org.springframework.data.redis.listener.KeyExpirationEventMessageListener
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 @Slf4j
+
 public class UploadExpireListener extends KeyExpirationEventMessageListener {
     private final FileOperater fileOperater;
     private final StringRedisTemplate redisTemplate;
+    Aliyunossdelte aliyunossdelte;
+    private final Aliyunpojo aliyunpojo;
 
     public UploadExpireListener(RedisMessageListenerContainer listenerContainer,
                                 FileOperater fileOperater,
-                                StringRedisTemplate redisTemplate) {
+                                StringRedisTemplate redisTemplate,
+                                Aliyunossdelte aliyunossdelte,
+                                Aliyunpojo aliyunpojo
+                                ) {
         super(listenerContainer);
         this.fileOperater = fileOperater;
         this.redisTemplate = redisTemplate;
+        this.aliyunossdelte = aliyunossdelte;
+        this.aliyunpojo = aliyunpojo;
     }
 
     @Override
@@ -47,12 +60,26 @@ public class UploadExpireListener extends KeyExpirationEventMessageListener {
             Boolean exists = redisTemplate.hasKey(fileKey);
 
             if(exists) {
+                String fileUrl = fileOperater.getFileUrl(ossKey);
 
-                log.info("清理过期上传文件 - fileId: {}, uploadId: {}, ossKey: {}", fileId, uploadId, ossKey);
-                redisTemplate.delete(redisKey);
+                List<String> urls = new ArrayList<>();
+                urls.add(fileUrl);
+                
+                try {
+                    aliyunossdelte.deleteimg(urls);
+                    log.info("删除OSS文件成功 - URL: {}", fileUrl);
+                } catch (Exception e) {
+                    log.warn("删除OSS文件失败（可能文件不存在）- URL: {}, 错误: {}", fileUrl, e.getMessage());
+                }
+                
                 fileOperater.abortUpload(uploadId, ossKey, fileId);
+                
+                log.info("清理过期上传文件完成 - fileId: {}, uploadId: {}, ossKey: {}", fileId, uploadId, ossKey);
+                redisTemplate.delete(redisKey);
+            } else {
+                log.info("上传已确认或已完成，跳过清理 - fileId: {}, uploadId: {}, ossKey: {}", fileId, uploadId, ossKey);
             }
-            
+
         } catch (Exception e) {
             log.error("处理过期上传文件失败: {}", redisKey, e);
         }

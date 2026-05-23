@@ -12,4 +12,7 @@ public interface redisContanst {
          String FILE_UPLOAD_PREFIX = "FILE:UPLOAD:";
          String FILE_EXPIRE_PREFIX = "FILE:EXPIRE:";
     }
+    interface Video{
+         String DURATION_PREFIX = "VIDEO:DURATION:";
+    }
 }
