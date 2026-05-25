@@ -1,4 +1,4 @@
-package com.pilpil.web.entity.vo;
+package com.pilpil.comment.entity.vo;
 
 
 import com.pilpil.comment.enums.LevelType;
@@ -12,11 +12,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class UserVo {
-    private String nick_name;
+    private String nickName;
     private String avatar;
     private Integer currentCoin;
     private LevelType level;
     private Integer experience;
+    private String introduction;
+    private Integer fans;
+    private Integer follow;
 
 
 }

@@ -14,5 +14,11 @@ public interface redisContanst {
     }
     interface Video{
          String DURATION_PREFIX = "VIDEO:DURATION:";
-    }
+         String VIDEO_RECORD_PREFIX = "VIDEO:RECORD:";
+     }
+     interface Danmu{
+         String DANMU_RECORD_PREFIX = "DANMU:RECORD:";
+         String DAMU_TEMPT_PREFIX = "DANMU:TEMPT:";
+         String DANMU_LIST_PREFIX = "DANMU:LIST:";
+     }
 }

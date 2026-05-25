@@ -2,15 +2,21 @@ package com.pilpil.comment.utils;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson.JSON;
+import com.pilpil.comment.entity.dto.VideoReview;
 import com.pilpil.comment.entity.dto.queryVideo;
 import com.pilpil.comment.entity.po.VideoDoc;
 import com.pilpil.comment.entity.vo.VideoDocVo;
+import com.pilpil.comment.enums.VideoStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
@@ -23,6 +29,7 @@ import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +43,7 @@ public class Escommpent {
 
     // 保存
     public void save(VideoDoc videoDoc){
+
         try {
             IndexRequest request = new IndexRequest(INDEX_NAME);
             request.id(videoDoc.getVideoId().toString());
@@ -56,13 +64,20 @@ public class Escommpent {
             SearchRequest request = new SearchRequest(INDEX_NAME);
             SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
             BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
-
+            String categoryId = queryVideo.getCategoryId();
+            List<Integer> category=new ArrayList<>();
+            if(categoryId != null){
+                String[] split = categoryId.split(",");
+                for (String s : split) {
+                    category.add(Integer.parseInt(s));
+                }
+            }
             // 1. 拼接查询条件
             if (queryVideo.getName() != null && !queryVideo.getName().isBlank()) {
                 boolQuery.must(QueryBuilders.matchQuery("name", queryVideo.getName()));
             }
             if (queryVideo.getCategoryId() != null) {
-                boolQuery.must(QueryBuilders.termQuery("categoryId", queryVideo.getCategoryId()));
+                boolQuery.must(QueryBuilders.termsQuery("categoryId", category));
             }
             if (queryVideo.getTags() != null && !queryVideo.getTags().isBlank()) {
                 boolQuery.must(QueryBuilders.matchQuery("tags", queryVideo.getTags()));
@@ -114,6 +129,31 @@ public class Escommpent {
         } catch (Exception e) {
             log.error("ES分页查询失败：", e);
             return VideoDocVo.builder().videoDocs(new ArrayList<>()).total(0).build();
+        }
+    }
+
+    public void reviewVideo(VideoReview videoReview) {
+        try {
+            UpdateRequest updateRequest = new UpdateRequest(INDEX_NAME, videoReview.getId().toString());
+            Integer code = videoReview.getStatus().getCode();
+            String json="{\"status\":"+code+"}";
+            updateRequest.doc(json, XContentType.JSON);
+            UpdateResponse update = client.update(updateRequest, RequestOptions.DEFAULT);
+            log.info("更新es数据成功：{}", update.getId());
+
+        } catch (IOException e) {
+            log.error("更新es数据异常：", e);
+        }
+
+    }
+    public void deleteVideo(Integer videoId){
+        try{
+            DeleteRequest deleteRequest = new DeleteRequest(INDEX_NAME, videoId.toString());
+            DeleteResponse delete = client.delete(deleteRequest, RequestOptions.DEFAULT);
+            log.info("删除es数据成功：{}", delete.getId());
+
+        }catch (Exception e){
+            log.error("删除视频信息异常：", e);
         }
     }
 }

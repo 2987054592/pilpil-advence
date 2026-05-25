@@ -33,7 +33,7 @@ public class VideoVo {
     private String cover;
 
     /**
-     * 作者id
+     * 作者名称
      */
     private String authorName;
 
@@ -81,5 +81,6 @@ public class VideoVo {
 
     private Integer favoriteCount;
 
+    private UserVo userVo;
 
 }

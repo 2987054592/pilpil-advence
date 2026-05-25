@@ -26,7 +26,8 @@ public class MvcConfig implements WebMvcConfigurer {
                         "/webjars/**",
                         "/category",
                         "/admin/user/login",
-                        "/video"
+                        "/video",
+                        "/danmu/list"
                 ).order(1);
         registry.addInterceptor(new RefreshTokenIntercreptor(redisTemplate)).order(0);
     }
