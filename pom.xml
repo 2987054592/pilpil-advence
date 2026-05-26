@@ -19,7 +19,7 @@
 
         <module>web</module>
         <module>admin</module>
-        <module>comment</module>
+        <module>common</module>
     </modules>
 
     <properties>

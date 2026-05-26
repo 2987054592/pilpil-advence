@@ -17,4 +17,5 @@ public class DanmuVo {
     private DanmuPosition position;
     private String color;
     private Long userId;
+    private Integer likeCount;
 }

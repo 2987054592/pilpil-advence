@@ -88,7 +88,7 @@
 
         <dependency>
             <groupId>cn.itcast</groupId>
-            <artifactId>comment</artifactId>
+            <artifactId>common</artifactId>
             <version>${project.version}</version>
         </dependency>
 
