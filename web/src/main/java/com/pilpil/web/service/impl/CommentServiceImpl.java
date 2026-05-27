@@ -24,6 +24,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.pilpil.common.constants.Exception.exceptionConstants.Comment.COMMENT_NOT_EXIST;
+import static com.pilpil.common.constants.Exception.exceptionConstants.User.USER_DELETE_ERROR;
 import static com.pilpil.common.constants.redis.redisContanst.Comment.COMMENT_LIST_PREFIX;
 import static com.pilpil.common.constants.redis.redisContanst.Comment.COMMENT_TOTAL;
 
@@ -138,7 +139,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         }
         User user = new User();
         user.setAvatar("");
-        user.setNickName("已经注销");
+        user.setNickName(USER_DELETE_ERROR);
         user.setLevel(LevelType.LV0);
         Set<Long> userIds = records.stream().map(Comment::getAuthorId).collect(Collectors.toSet());
         List<User> users = userService.getBaseMapper().selectByIds(userIds);
@@ -180,7 +181,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         }
         User user = new User();
             user.setAvatar("");
-            user.setNickName("已经注销");
+            user.setNickName(USER_DELETE_ERROR);
             user.setLevel(LevelType.LV0);
         Set<Long> userIds = records.stream().map(Comment::getAuthorId).collect(Collectors.toSet());
         List<User> users = userService.getBaseMapper().selectByIds(userIds);

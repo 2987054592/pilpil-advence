@@ -16,4 +16,6 @@ import com.pilpil.web.entity.dto.CoinDto;
 public interface ICoinService extends IService<Coin> {
 
     void saveCoin(CoinDto coinDto);
+
+    Integer getCoin(Integer videoId);
 }

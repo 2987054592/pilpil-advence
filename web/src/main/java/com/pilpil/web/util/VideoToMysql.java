@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.Set;
 
+import static com.pilpil.common.constants.redis.redisContanst.Coin.COIN_INCRE_PREFIX;
 import static com.pilpil.common.constants.redis.redisContanst.Like.LIKE_VIDEO_PREFIX;
 import static com.pilpil.common.constants.redis.redisContanst.Video.VIDEO_PLAY_PREFIX;
 
@@ -29,6 +30,7 @@ public class VideoToMysql {
         log.info("开始同步视频相关到数据库");
         PlayCount();
         VideoLike();
+        VideoCoin();
         log.info("同步视频相关到数据库完成");
     }
 
@@ -73,4 +75,22 @@ public class VideoToMysql {
             redisTemplate.delete(key);
         }
     }
+    private void VideoCoin(){
+        Set<String> keys = redisTemplate.keys(COIN_INCRE_PREFIX + "*");
+        if(keys==null||keys.isEmpty())
+            return;
+        for (String key : keys){
+            Map<Object, Object> HashData = redisTemplate.opsForHash().entries(key);
+            HashData.forEach((videoIdObj,coinCountObj)->{
+                int videoId = Integer.parseInt(videoIdObj.toString());
+                int coinCount = Integer.parseInt(coinCountObj.toString());
+                videoDataService.lambdaUpdate()
+                        .eq(VideoData::getVideoId, videoId)
+                        .setSql("coin_count = IFNULL(coin_count, 0) + " + coinCount)
+                        .update();
+            });
+            redisTemplate.delete(key);
+        }
+    }
+
 }

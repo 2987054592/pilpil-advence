@@ -4,9 +4,14 @@ package com.pilpil.web.controller;
 import com.pilpil.common.entity.Result;
 import com.pilpil.common.entity.dto.VideoRecordDto;
 import com.pilpil.common.entity.po.VideoRecord;
+import com.pilpil.web.entity.dto.VideoRecordDtoWeb;
+import com.pilpil.web.entity.vo.ListVideoRecordVo;
+import com.pilpil.web.entity.vo.VideoRecordVo;
 import com.pilpil.web.service.IVideoRecordService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * <p>
@@ -34,6 +39,10 @@ public class VideoRecordController {
     public Result playVideo(@RequestParam("sectionId") Integer sectionId,@RequestParam("videoId") Integer videoId){
         videoRecordService.playVideo(sectionId,videoId);
         return Result.success();
+    }
+    @PostMapping("/list")
+    public Result<ListVideoRecordVo> getVideoRecordList(@RequestBody VideoRecordDtoWeb videoRecordDto){
+        return Result.success(videoRecordService.getVideoRecordList(videoRecordDto));
     }
 
 }

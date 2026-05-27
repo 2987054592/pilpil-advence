@@ -3,12 +3,17 @@ package com.pilpil.web.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pilpil.common.entity.dto.VideoRecordDto;
+import com.pilpil.common.entity.po.User;
 import com.pilpil.common.entity.po.Video;
 import com.pilpil.common.entity.po.VideoDetail;
 import com.pilpil.common.entity.po.VideoRecord;
 import com.pilpil.common.exception.illegalException;
 import com.pilpil.common.utils.UserHolder;
+import com.pilpil.web.entity.dto.VideoRecordDtoWeb;
+import com.pilpil.web.entity.vo.ListVideoRecordVo;
+import com.pilpil.web.entity.vo.VideoRecordVo;
 import com.pilpil.web.mapper.VideoRecordMapper;
 import com.pilpil.web.service.IVideoDetailService;
 import com.pilpil.web.service.IVideoRecordService;
@@ -19,6 +24,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.pilpil.common.constants.Exception.exceptionConstants.Video.VIDEO_NOT_EXIST;
 import static com.pilpil.common.constants.redis.redisContanst.Video.VIDEO_PLAY_PREFIX;
@@ -40,6 +49,7 @@ public class VideoRecordServiceImpl extends ServiceImpl<VideoRecordMapper, Video
     private final DelayTaskHnader delayTaskHnader;
     private final IVideoService videoService;
     private final IVideoDetailService videoDetailService;
+    private final IVideoService userService;
     @Override
     public void saveRecord(VideoRecordDto videoRecordDto) {
         Long userId = UserHolder.get().getId();
@@ -103,5 +113,54 @@ public class VideoRecordServiceImpl extends ServiceImpl<VideoRecordMapper, Video
         String key=VIDEO_PLAY_PREFIX+videoId;
         redisTemplate.opsForHash().increment(key,sectionId.toString(),1);
 
+    }
+
+    @Override
+    public ListVideoRecordVo getVideoRecordList(VideoRecordDtoWeb videoRecordDto) {
+        Long userId = UserHolder.get().getId();
+
+
+        Page<VideoRecord> page = lambdaQuery()
+                .eq(VideoRecord::getUserId, userId)
+                .page(new Page<>(videoRecordDto.getPageNum(), videoRecordDto.getPageSize()));
+
+        ListVideoRecordVo vo = new ListVideoRecordVo();
+        if (page == null || page.getRecords().isEmpty()) {
+            vo.setList(Collections.emptyList());
+            vo.setTotal(0);
+            vo.setPageSize(0);
+            return vo;
+        }
+
+
+        List<VideoRecord> records = page.getRecords();
+        Set<Integer> videoIds = records.stream()
+                .map(VideoRecord::getVideoId)
+                .collect(Collectors.toSet());
+
+
+        Map<Integer, Video> videoMap = videoService.lambdaQuery()
+                .in(Video::getId, videoIds)
+                .like(videoRecordDto.getVideoName()!=null,Video::getName, videoRecordDto.getVideoName())
+                .list()
+                .stream()
+                .collect(Collectors.toMap(Video::getId, c -> c));
+
+        List<VideoRecordVo> vos=new ArrayList<>();
+
+        for(VideoRecord record:records){
+            VideoRecordVo vo1 = new VideoRecordVo();
+            vo1.setVideoName(videoMap.get(record.getVideoId()).getName());
+            vo1.setCover(videoMap.get(record.getVideoId()).getCover());
+            vo1.setTime(record.getUpdateTime());
+            vo1.setMoment(record.getMoment());
+            vo1.setDurationTotal(videoMap.get(record.getVideoId()).getDurationTotal());
+            vo1.setVideoId(record.getVideoId());
+            vos.add(vo1);
+        }
+        vo.setList(vos);
+        vo.setTotal((int) page.getTotal());
+        vo.setPageSize((int) page.getSize());
+        return vo;
     }
 }

@@ -2,14 +2,11 @@ package com.pilpil.web.controller;
 
 
 import com.pilpil.common.entity.Result;
+import com.pilpil.common.enums.CoinType;
 import com.pilpil.web.entity.dto.CoinDto;
 import com.pilpil.web.service.ICoinService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * <p>
@@ -24,9 +21,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class CoinController {
     private final ICoinService coinService;
-    @PostMapping
+    @PostMapping("/save")
     public Result saveCoin(@RequestBody CoinDto coinDto){
         coinService.saveCoin(coinDto);
         return Result.success();
+    }
+    @GetMapping
+    public Result<Integer> getCoin(Integer videoId){
+
+        return Result.success(coinService.getCoin(videoId));
     }
 }

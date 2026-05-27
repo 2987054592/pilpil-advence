@@ -7,27 +7,24 @@ import java.time.LocalDate;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 
-import com.pilpil.common.enums.VideoStatus;
-import com.pilpil.common.enums.VideoType;
-import lombok.Builder;
+import com.pilpil.common.enums.FavoriteShowType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 视频表
+ * 收藏夹
  * </p>
  *
  * @author 
- * @since 2026-05-22
+ * @since 2026-05-27
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("video")
-@Builder
-public class Video implements Serializable {
+@TableName("favorite")
+public class Favorite implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -35,51 +32,41 @@ public class Video implements Serializable {
     private Integer id;
 
     /**
-     * 视频名称
+     * 所属用户id
      */
-    private String name;
+    private Long userId;
 
     /**
-     * 视频封面
+     * 封面
      */
     private String cover;
 
     /**
-     * 作者id
-     */
-    private Long authorId;
-
-    /**
-     * 视频简介
+     * 描述
      */
     @TableField("`desc`")
     private String desc;
 
+    /**
+     * 创建时间
+     */
     private LocalDate createTime;
 
     /**
-     * 0正常，1审核，2封禁
+     * 收藏夹内视频的数量
      */
-    private VideoStatus status;
+    private Integer count;
 
     /**
-     * 0自制，1转载
+     * 0对外开放
+1隐私
      */
-    private VideoType type;
-
+    private FavoriteShowType visible;
     /**
-     * 分类id
+     * 收藏夹名称
      */
-    private Integer categoryId;
+    private String name;
 
-    /**
-     * 标签，回车分割
 
-     */
-    private String tags;
-    /**
-     * 视频的总时长
-     */
-    private Long durationTotal;
 
 }

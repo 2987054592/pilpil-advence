@@ -31,10 +31,7 @@ import org.springframework.stereotype.Service;
 import com.pilpil.common.entity.vo.UserVo;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -222,6 +219,13 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
                 .like(queryVideo.getName() != null, Video::getName, queryVideo.getName())
                 .page(new Page<>(queryVideo.getPageNum(), queryVideo.getPageSize()));
         MyVideoList vo = new MyVideoList();
+        if(page==null || page.getRecords().isEmpty()){
+            vo.setList(Collections.emptyList());
+            vo.setTotal(0);
+            vo.setPageSize(0);
+            return vo;
+        }
+
         vo.setTotal((int) page.getTotal());
         vo.setPageSize(queryVideo.getPageSize());
         List<Video> records = page.getRecords();

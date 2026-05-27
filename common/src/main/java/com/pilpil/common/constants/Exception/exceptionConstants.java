@@ -10,6 +10,7 @@ public interface exceptionConstants {
         String EMAIL_EXIST = "邮箱已存在";
         String EMAIL_NULL = "邮箱不能为空";
         String USER_STATUS_ERROR = "用户状态异常";
+        String USER_DELETE_ERROR = "用户已注销";
     }
     interface Category{
         String CATEGORY_EXIST = "分类已存在";
@@ -34,5 +35,13 @@ public interface exceptionConstants {
     }
     interface Coin{
         String COIN_EXIST = "已经投过币了";
+        String COIN_NOT_ENOUGH = "硬币数不足";
+    }
+    interface Favorite{
+        String FAVORITE_EXIST = "收藏夹已存在";
+        String FAVORITE_NOT_EXIST = "收藏夹不存在";
+        String FAVORITE_VIDEO_EXIST = "视频已收藏";
+        String FAVORITE_VIDEO_NOT_EXIST = "视频未收藏";
+
     }
 }

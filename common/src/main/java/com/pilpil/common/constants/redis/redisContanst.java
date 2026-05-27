@@ -16,7 +16,6 @@ public interface redisContanst {
          String DURATION_PREFIX = "VIDEO:DURATION:";
          String VIDEO_RECORD_PREFIX = "VIDEO:RECORD:";
          String VIDEO_PLAY_PREFIX = "VIDEO:PLAY:";
-         String VIDEO_DATA_PREFIX = "VIDEO:DATA:";
      }
      interface Danmu{
          String DANMU_RECORD_PREFIX = "DANMU:RECORD:";
@@ -35,6 +34,9 @@ public interface redisContanst {
      }
      interface Coin{
          String COIN_INCRE_PREFIX = "COIN:INCRE:";
+     }
+     interface Favorite{
+         String FAVORITE_INCRE_PREFIX = "FAVORITE:INCRE:";
      }
 
 
