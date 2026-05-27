@@ -4,11 +4,11 @@ package com.pilpil.web.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.pilpil.comment.entity.po.Danmu;
-import com.pilpil.comment.entity.po.Video;
-import com.pilpil.comment.entity.po.VideoDetail;
-import com.pilpil.comment.exception.illegalException;
-import com.pilpil.comment.utils.UserHolder;
+import com.pilpil.common.entity.po.Danmu;
+import com.pilpil.common.entity.po.Video;
+import com.pilpil.common.entity.po.VideoDetail;
+import com.pilpil.common.exception.illegalException;
+import com.pilpil.common.utils.UserHolder;
 import com.pilpil.web.entity.dto.DanmuDto;
 import com.pilpil.web.entity.dto.queryDanmuDto;
 import com.pilpil.web.entity.vo.DanmuVo;
@@ -26,10 +26,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static com.pilpil.comment.constants.Exception.exceptionConstants.Danmu.DAMU_NOT_OWNER;
-import static com.pilpil.comment.constants.Exception.exceptionConstants.Danmu.DANMU_NOT_EXIST;
-import static com.pilpil.comment.constants.Exception.exceptionConstants.Video.VIDEO_NOT_EXIST;
-import static com.pilpil.comment.constants.redis.redisContanst.Danmu.*;
+import static com.pilpil.common.constants.Exception.exceptionConstants.Danmu.DAMU_NOT_OWNER;
+import static com.pilpil.common.constants.Exception.exceptionConstants.Danmu.DANMU_NOT_EXIST;
+import static com.pilpil.common.constants.Exception.exceptionConstants.Video.VIDEO_NOT_EXIST;
+import static com.pilpil.common.constants.redis.redisContanst.Danmu.*;
 
 /**
  * <p>

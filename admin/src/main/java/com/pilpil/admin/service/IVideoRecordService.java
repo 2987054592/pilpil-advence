@@ -2,7 +2,7 @@ package com.pilpil.admin.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.pilpil.comment.entity.po.VideoRecord;
+import com.pilpil.common.entity.po.VideoRecord;
 
 /**
  * <p>

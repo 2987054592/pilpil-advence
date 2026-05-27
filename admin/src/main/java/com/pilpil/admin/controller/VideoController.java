@@ -1,16 +1,14 @@
 package com.pilpil.admin.controller;
 
 
-import com.pilpil.comment.entity.dto.VideoReview;
+import com.pilpil.common.entity.dto.VideoReview;
 import com.pilpil.admin.service.IVideoService;
-import com.pilpil.comment.entity.Result;
-import com.pilpil.comment.entity.dto.queryVideo;
-import com.pilpil.comment.entity.vo.VideoDocVo;
-import com.pilpil.comment.entity.vo.VideoVo;
+import com.pilpil.common.entity.Result;
+import com.pilpil.common.entity.dto.queryVideo;
+import com.pilpil.common.entity.vo.VideoDocVo;
+import com.pilpil.common.entity.vo.VideoVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * <p>

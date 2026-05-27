@@ -2,11 +2,11 @@ package com.pilpil.web.service.impl;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.pilpil.comment.entity.po.Comment;
-import com.pilpil.comment.entity.po.User;
-import com.pilpil.comment.enums.CommentTopType;
-import com.pilpil.comment.enums.LevelType;
-import com.pilpil.comment.utils.UserHolder;
+import com.pilpil.common.entity.po.Comment;
+import com.pilpil.common.entity.po.User;
+import com.pilpil.common.enums.CommentTopType;
+import com.pilpil.common.enums.LevelType;
+import com.pilpil.common.utils.UserHolder;
 import com.pilpil.web.entity.dto.CommentDto;
 import com.pilpil.web.entity.dto.QueryCommentDto;
 import com.pilpil.web.entity.vo.CommentVo;
@@ -23,9 +23,9 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.pilpil.comment.constants.Exception.exceptionConstants.Comment.COMMENT_NOT_EXIST;
-import static com.pilpil.comment.constants.redis.redisContanst.Comment.COMMENT_LIST_PREFIX;
-import static com.pilpil.comment.constants.redis.redisContanst.Comment.COMMENT_TOTAL;
+import static com.pilpil.common.constants.Exception.exceptionConstants.Comment.COMMENT_NOT_EXIST;
+import static com.pilpil.common.constants.redis.redisContanst.Comment.COMMENT_LIST_PREFIX;
+import static com.pilpil.common.constants.redis.redisContanst.Comment.COMMENT_TOTAL;
 
 /**
  * <p>
@@ -136,19 +136,16 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             vo.setCommentList(Collections.emptyList());
             return vo;
         }
-
+        User user = new User();
+        user.setAvatar("");
+        user.setNickName("已经注销");
+        user.setLevel(LevelType.LV0);
         Set<Long> userIds = records.stream().map(Comment::getAuthorId).collect(Collectors.toSet());
         List<User> users = userService.getBaseMapper().selectByIds(userIds);
-        Map<Long, User> userMap = users.stream().collect(Collectors.toMap(User::getId, user -> user));
+        Map<Long, User> userMap = users.stream().collect(Collectors.toMap(User::getId, u -> u));
         List<CommentVo> vos = records.stream().map(comment -> {
             Long authorId = comment.getAuthorId();
             User author = userMap.get(authorId);
-            User user = new User();
-            if(author==null){
-                user.setAvatar("");
-                user.setNickName("已经注销");
-                user.setLevel(LevelType.LV0);
-            }
             return CommentVo.builder()
                     .id(comment.getId())
                     .level(author==null ? user.getLevel() : author.getLevel())
@@ -181,19 +178,16 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
             vo.setCommentList(Collections.emptyList());
             return vo;
         }
-
+        User user = new User();
+            user.setAvatar("");
+            user.setNickName("已经注销");
+            user.setLevel(LevelType.LV0);
         Set<Long> userIds = records.stream().map(Comment::getAuthorId).collect(Collectors.toSet());
         List<User> users = userService.getBaseMapper().selectByIds(userIds);
-        Map<Long, User> userMap = users.stream().collect(Collectors.toMap(User::getId, user -> user));
+        Map<Long, User> userMap = users.stream().collect(Collectors.toMap(User::getId, u -> u));
         List<CommentVo> list = records.stream().map(comment -> {
             Long authorId = comment.getAuthorId();
             User author = userMap.get(authorId);
-            User user = new User();
-            if(author==null){
-                user.setAvatar("");
-                user.setNickName("已经注销");
-                user.setLevel(LevelType.LV0);
-            }
             CommentVo commentVo = new CommentVo();
             commentVo.setId(comment.getId());
             commentVo.setAuthorAvatar(author==null ? user.getAvatar() : author.getAvatar());

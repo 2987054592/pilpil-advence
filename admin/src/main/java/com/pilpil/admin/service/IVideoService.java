@@ -2,11 +2,11 @@ package com.pilpil.admin.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.pilpil.comment.entity.dto.VideoReview;
-import com.pilpil.comment.entity.dto.queryVideo;
-import com.pilpil.comment.entity.po.Video;
-import com.pilpil.comment.entity.vo.VideoDocVo;
-import com.pilpil.comment.entity.vo.VideoVo;
+import com.pilpil.common.entity.dto.VideoReview;
+import com.pilpil.common.entity.dto.queryVideo;
+import com.pilpil.common.entity.po.Video;
+import com.pilpil.common.entity.vo.VideoDocVo;
+import com.pilpil.common.entity.vo.VideoVo;
 
 /**
  * <p>

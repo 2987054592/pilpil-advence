@@ -3,12 +3,12 @@ package com.pilpil.web.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONUtil;
-import com.pilpil.comment.entity.dto.VideoRecordDto;
-import com.pilpil.comment.entity.po.Video;
-import com.pilpil.comment.entity.po.VideoDetail;
-import com.pilpil.comment.entity.po.VideoRecord;
-import com.pilpil.comment.exception.illegalException;
-import com.pilpil.comment.utils.UserHolder;
+import com.pilpil.common.entity.dto.VideoRecordDto;
+import com.pilpil.common.entity.po.Video;
+import com.pilpil.common.entity.po.VideoDetail;
+import com.pilpil.common.entity.po.VideoRecord;
+import com.pilpil.common.exception.illegalException;
+import com.pilpil.common.utils.UserHolder;
 import com.pilpil.web.mapper.VideoRecordMapper;
 import com.pilpil.web.service.IVideoDetailService;
 import com.pilpil.web.service.IVideoRecordService;
@@ -20,9 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import static com.pilpil.comment.constants.Exception.exceptionConstants.Video.VIDEO_NOT_EXIST;
-import static com.pilpil.comment.constants.redis.redisContanst.Video.VIDEO_PLAY_PREFIX;
-import static com.pilpil.comment.constants.redis.redisContanst.Video.VIDEO_RECORD_PREFIX;
+import static com.pilpil.common.constants.Exception.exceptionConstants.Video.VIDEO_NOT_EXIST;
+import static com.pilpil.common.constants.redis.redisContanst.Video.VIDEO_PLAY_PREFIX;
+import static com.pilpil.common.constants.redis.redisContanst.Video.VIDEO_RECORD_PREFIX;
 
 /**
  * <p>

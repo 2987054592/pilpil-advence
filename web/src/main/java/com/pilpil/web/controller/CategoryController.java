@@ -2,9 +2,9 @@ package com.pilpil.web.controller;
 
 
 
-import com.pilpil.comment.entity.Result;
+import com.pilpil.common.entity.Result;
 
-import com.pilpil.comment.entity.vo.CategoryVo;
+import com.pilpil.common.entity.vo.CategoryVo;
 import com.pilpil.web.service.ICategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

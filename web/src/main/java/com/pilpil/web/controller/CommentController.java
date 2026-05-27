@@ -1,12 +1,11 @@
 package com.pilpil.web.controller;
 
 
-import com.pilpil.comment.entity.Result;
+import com.pilpil.common.entity.Result;
 import com.pilpil.web.entity.dto.CommentDto;
 import com.pilpil.web.entity.dto.QueryCommentDto;
 import com.pilpil.web.entity.vo.QueryCommentVo;
 import com.pilpil.web.service.ICommentService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

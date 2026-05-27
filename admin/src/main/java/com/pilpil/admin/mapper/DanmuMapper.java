@@ -2,7 +2,7 @@ package com.pilpil.admin.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.pilpil.comment.entity.po.Danmu;
+import com.pilpil.common.entity.po.Danmu;
 
 /**
  * <p>

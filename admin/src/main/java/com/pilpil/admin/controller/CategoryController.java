@@ -5,9 +5,9 @@ package com.pilpil.admin.controller;
 import com.pilpil.admin.entity.dto.CategoryDto;
 import com.pilpil.admin.service.ICategoryService;
 
-import com.pilpil.comment.entity.Result;
-import com.pilpil.comment.entity.po.Category;
-import com.pilpil.comment.entity.vo.CategoryVo;
+import com.pilpil.common.entity.Result;
+import com.pilpil.common.entity.po.Category;
+import com.pilpil.common.entity.vo.CategoryVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

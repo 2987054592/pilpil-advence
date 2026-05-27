@@ -2,7 +2,7 @@ package com.pilpil.web.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.pilpil.comment.entity.po.VideoDetail;
+import com.pilpil.common.entity.po.VideoDetail;
 
 /**
  * <p>

@@ -1,9 +1,9 @@
 package com.pilpil.web.controller;
 
 
-import com.pilpil.comment.entity.Result;
-import com.pilpil.comment.entity.dto.VideoRecordDto;
-import com.pilpil.comment.entity.po.VideoRecord;
+import com.pilpil.common.entity.Result;
+import com.pilpil.common.entity.dto.VideoRecordDto;
+import com.pilpil.common.entity.po.VideoRecord;
 import com.pilpil.web.service.IVideoRecordService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

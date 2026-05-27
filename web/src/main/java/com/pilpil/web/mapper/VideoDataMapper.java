@@ -2,8 +2,7 @@ package com.pilpil.web.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.pilpil.comment.entity.po.VideoData;
-import org.apache.ibatis.annotations.Update;
+import com.pilpil.common.entity.po.VideoData;
 
 /**
  * <p>

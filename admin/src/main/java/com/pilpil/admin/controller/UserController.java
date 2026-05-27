@@ -3,12 +3,12 @@ package com.pilpil.admin.controller;
 
 import com.pilpil.admin.entity.dto.UserDto;
 import com.pilpil.admin.service.IUserService;
-import com.pilpil.comment.entity.Result;
+import com.pilpil.common.entity.Result;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import static com.pilpil.comment.constants.Exception.exceptionConstants.User.USER_LOGIN_ERROR;
+import static com.pilpil.common.constants.Exception.exceptionConstants.User.USER_LOGIN_ERROR;
 
 /**
  * <p>

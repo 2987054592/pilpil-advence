@@ -1,17 +1,14 @@
 package com.pilpil.web.mq;
 
-import com.pilpil.comment.constants.mq.mqConstans;
-import com.pilpil.comment.entity.dto.queryVideo;
-import com.pilpil.comment.entity.po.VideoDoc;
-import com.pilpil.comment.utils.Escommpent;
+import com.pilpil.common.constants.mq.mqConstans;
+import com.pilpil.common.entity.po.VideoDoc;
+import com.pilpil.common.utils.Escommpent;
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 public class VideoMq {

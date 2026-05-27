@@ -3,7 +3,7 @@ package com.pilpil.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.pilpil.admin.entity.dto.UserDto;
-import com.pilpil.comment.entity.po.User;
+import com.pilpil.common.entity.po.User;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**

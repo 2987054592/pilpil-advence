@@ -2,7 +2,7 @@ package com.pilpil.web.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.pilpil.comment.entity.po.User;
+import com.pilpil.common.entity.po.User;
 
 /**
  * <p>

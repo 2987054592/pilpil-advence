@@ -1,7 +1,7 @@
 package com.pilpil.web.controller;
 
 
-import com.pilpil.comment.entity.Result;
+import com.pilpil.common.entity.Result;
 import com.pilpil.web.entity.dto.DanmuDto;
 import com.pilpil.web.entity.dto.queryDanmuDto;
 import com.pilpil.web.entity.vo.DanmuVo;

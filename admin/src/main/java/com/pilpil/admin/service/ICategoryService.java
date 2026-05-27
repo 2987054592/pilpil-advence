@@ -2,8 +2,8 @@ package com.pilpil.admin.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.pilpil.admin.entity.dto.CategoryDto;
-import com.pilpil.comment.entity.po.Category;
-import com.pilpil.comment.entity.vo.CategoryVo;
+import com.pilpil.common.entity.po.Category;
+import com.pilpil.common.entity.vo.CategoryVo;
 
 import java.util.List;
 

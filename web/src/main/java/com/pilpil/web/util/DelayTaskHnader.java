@@ -3,12 +3,9 @@ package com.pilpil.web.util;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.pilpil.comment.entity.delayTask;
-import com.pilpil.comment.entity.dto.VideoRecordDto;
-import com.pilpil.comment.entity.po.VideoRecord;
-import com.pilpil.comment.utils.UserHolder;
+import com.pilpil.common.entity.delayTask;
+import com.pilpil.common.entity.po.VideoRecord;
 import com.pilpil.web.mapper.VideoRecordMapper;
-import com.pilpil.web.service.IVideoRecordService;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.AllArgsConstructor;
@@ -24,7 +21,7 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.DelayQueue;
 
-import static com.pilpil.comment.constants.redis.redisContanst.Video.VIDEO_RECORD_PREFIX;
+import static com.pilpil.common.constants.redis.redisContanst.Video.VIDEO_RECORD_PREFIX;
 
 @Component
 @RequiredArgsConstructor

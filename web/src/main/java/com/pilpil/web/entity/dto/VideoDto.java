@@ -1,8 +1,7 @@
 package com.pilpil.web.entity.dto;
 
-import com.pilpil.comment.entity.vo.VideoDetailDto;
-import com.pilpil.comment.enums.VideoStatus;
-import com.pilpil.comment.enums.VideoType;
+import com.pilpil.common.entity.vo.VideoDetailDto;
+import com.pilpil.common.enums.VideoType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

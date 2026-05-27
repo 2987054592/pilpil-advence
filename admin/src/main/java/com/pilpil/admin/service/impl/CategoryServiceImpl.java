@@ -6,12 +6,12 @@ import cn.hutool.json.JSONUtil;
 import com.pilpil.admin.entity.dto.CategoryDto;
 import com.pilpil.admin.mapper.CategoryMapper;
 import com.pilpil.admin.service.ICategoryService;
-import com.pilpil.comment.constants.redis.redisContanst;
-import com.pilpil.comment.entity.po.Category;
-import com.pilpil.comment.entity.vo.CategoryVo;
+import com.pilpil.common.constants.redis.redisContanst;
+import com.pilpil.common.entity.po.Category;
+import com.pilpil.common.entity.vo.CategoryVo;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.pilpil.comment.exception.illegalException;
+import com.pilpil.common.exception.illegalException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static com.pilpil.comment.constants.Exception.exceptionConstants.Category.*;
+import static com.pilpil.common.constants.Exception.exceptionConstants.Category.*;
 
 
 /**

@@ -2,22 +2,25 @@ package com.pilpil.web.service.impl;
 
 
 import cn.hutool.core.bean.BeanUtil;
-import com.pilpil.comment.constants.mq.mqConstans;
-import com.pilpil.comment.constants.redis.redisContanst;
-import com.pilpil.comment.entity.dto.queryVideo;
-import com.pilpil.comment.entity.po.*;
-import com.pilpil.comment.entity.vo.VideoDetailDto;
-import com.pilpil.comment.entity.vo.VideoDetails;
-import com.pilpil.comment.entity.vo.VideoDocVo;
-import com.pilpil.comment.entity.vo.VideoVo;
-import com.pilpil.comment.enums.StatusType;
-import com.pilpil.comment.enums.VideoStatus;
-import com.pilpil.comment.exception.illegalException;
-import com.pilpil.comment.utils.Escommpent;
-import com.pilpil.comment.utils.FileOperater;
-import com.pilpil.comment.utils.UserHolder;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.pilpil.common.constants.mq.mqConstans;
+import com.pilpil.common.constants.redis.redisContanst;
+import com.pilpil.common.entity.dto.queryVideo;
+import com.pilpil.common.entity.po.*;
+import com.pilpil.common.entity.vo.VideoDetailDto;
+import com.pilpil.common.entity.vo.VideoDetails;
+import com.pilpil.common.entity.vo.VideoDocVo;
+import com.pilpil.common.entity.vo.VideoVo;
+import com.pilpil.common.enums.StatusType;
+import com.pilpil.common.enums.VideoStatus;
+import com.pilpil.common.exception.illegalException;
+import com.pilpil.common.utils.Escommpent;
+import com.pilpil.common.utils.FileOperater;
+import com.pilpil.common.utils.UserHolder;
 
 import com.pilpil.web.entity.dto.VideoDto;
+import com.pilpil.web.entity.vo.MyVideoList;
+import com.pilpil.web.entity.vo.MyVideoVo;
 import com.pilpil.web.mapper.VideoMapper;
 import com.pilpil.web.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -25,18 +28,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-import com.pilpil.comment.entity.vo.UserVo;
+import com.pilpil.common.entity.vo.UserVo;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.pilpil.comment.constants.Exception.exceptionConstants.Category.CATEGORY_NOT_EXIST;
-import static com.pilpil.comment.constants.Exception.exceptionConstants.User.USER_STATUS_ERROR;
-import static com.pilpil.comment.constants.Exception.exceptionConstants.Video.VIDEO_NOT_EXIST;
-import static com.pilpil.comment.constants.Exception.exceptionConstants.Video.VIDEO_STATUS_ERROR;
+import static com.pilpil.common.constants.Exception.exceptionConstants.Category.CATEGORY_NOT_EXIST;
+import static com.pilpil.common.constants.Exception.exceptionConstants.User.USER_STATUS_ERROR;
+import static com.pilpil.common.constants.Exception.exceptionConstants.Video.VIDEO_NOT_EXIST;
+import static com.pilpil.common.constants.Exception.exceptionConstants.Video.VIDEO_STATUS_ERROR;
 
 /**
  * <p>
@@ -78,6 +84,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         video.setAuthorId(UserHolder.get().getId());
         AtomicLong totalDuration  = new AtomicLong();
         save(video);
+        VideoData videoData = new VideoData();
+        videoData.setVideoId(video.getId());
+        videoDataService.save(videoData);
         List<String> urls=new ArrayList<>();
         List<VideoDetail> newDate=new ArrayList<>();
         videoDetailDtos.forEach(videoDetailDto -> {
@@ -147,10 +156,13 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         VideoDocVo vo= escommpent.searchVideo(queryVideo,pageNum,pageSize);
         List<VideoDoc> videoDocs = vo.getVideoDocs();
         List<VideoDoc> list = videoDocs.stream().filter(videoDoc -> videoDoc.getStatus().equals(VideoStatus.NORMAL.getCode())).toList();
+        Set<Integer> videoId = list.stream().map(VideoDoc::getVideoId).collect(Collectors.toSet());
+        List<VideoData> list5 = videoDataService.lambdaQuery().in(VideoData::getVideoId, videoId).list();
+        Map<Integer, VideoData> videoMap = list5.stream().collect(Collectors.toMap(VideoData::getVideoId, videoData -> videoData));
         for(VideoDoc videoDoc:list){
-            List<VideoData> list1 = videoDataService.lambdaQuery().eq(VideoData::getVideoId, videoDoc.getVideoId()).list();
-            long DanmuCount = list1.stream().collect(Collectors.summarizingInt(VideoData::getDanmuCount)).getSum();
-            long PlayCount = list1.stream().collect(Collectors.summarizingInt(VideoData::getViewCount)).getSum();
+            VideoData list1 = videoMap.get(videoDoc.getVideoId());
+            long DanmuCount = list1.getDanmuCount();
+            long PlayCount = list1.getViewCount();
             videoDoc.setPlayCount(PlayCount);
             videoDoc.setDanmakuCount(DanmuCount);
         }
@@ -178,12 +190,13 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         List<VideoDetails> videoDetails = BeanUtil.copyToList(list1, VideoDetails.class);
         VideoVo bean = BeanUtil.toBean(video, VideoVo.class);
         UserVo uservo = BeanUtil.toBean(user, UserVo.class);
-        long DanmuCount = videoDataService.lambdaQuery().eq(VideoData::getVideoId, id).list().stream().collect(Collectors.summarizingInt(VideoData::getDanmuCount)).getSum();
-        long PlayCount = videoDataService.lambdaQuery().eq(VideoData::getVideoId, id).list().stream().collect(Collectors.summarizingInt(VideoData::getViewCount)).getSum();
-        long LikeCount = videoDataService.lambdaQuery().eq(VideoData::getVideoId, id).list().stream().collect(Collectors.summarizingInt(VideoData::getLikeCount)).getSum();
-        long CoinCount = videoDataService.lambdaQuery().eq(VideoData::getVideoId, id).list().stream().collect(Collectors.summarizingInt(VideoData::getCoinCount)).getSum();
-        long collectCount = videoDataService.lambdaQuery().eq(VideoData::getVideoId, id).list().stream().collect(Collectors.summarizingInt(VideoData::getCollectCount)).getSum();
-        long commentCount = videoDataService.lambdaQuery().eq(VideoData::getVideoId, id).list().stream().collect(Collectors.summarizingInt(VideoData::getCommentCount)).getSum();
+        VideoData data = videoDataService.lambdaQuery().eq(VideoData::getVideoId, id).one();
+        long DanmuCount = data.getDanmuCount();
+        long PlayCount = data.getViewCount();
+        long LikeCount = data.getLikeCount();
+        long CoinCount = data.getCoinCount();
+        long collectCount = data.getCollectCount();
+        long commentCount = data.getCommentCount();
         //TODO粉丝，关注
         uservo.setFans(0);
         uservo.setFollow(0);
@@ -198,5 +211,34 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         bean.setCommentCount((int) commentCount);
         return bean;
 
+    }
+
+    @Override
+    public MyVideoList getMyVideo(queryVideo queryVideo) {
+        Long userId = UserHolder.get().getId();
+        User author = userService.lambdaQuery().eq(User::getId, userId).one();
+
+        Page<Video> page = lambdaQuery().eq(Video::getAuthorId, userId)
+                .like(queryVideo.getName() != null, Video::getName, queryVideo.getName())
+                .page(new Page<>(queryVideo.getPageNum(), queryVideo.getPageSize()));
+        MyVideoList vo = new MyVideoList();
+        vo.setTotal((int) page.getTotal());
+        vo.setPageSize(queryVideo.getPageSize());
+        List<Video> records = page.getRecords();
+
+        Set<Integer> videoId = records.stream().map(Video::getId).collect(Collectors.toSet());
+        List<VideoData> list = videoDataService.lambdaQuery()
+                .in(VideoData::getVideoId, videoId).list();
+        Map<Integer, VideoData> videoMap = list.stream().collect(Collectors.toMap(VideoData::getVideoId, videoData -> videoData));
+
+
+        List<MyVideoVo> myVideoVos = BeanUtil.copyToList(records, MyVideoVo.class);
+        myVideoVos.forEach(myVideoVo -> {
+            myVideoVo.setAuthorName(author.getNickName());
+            myVideoVo.setDanmuCount(videoMap.get(myVideoVo.getId()).getDanmuCount());
+            myVideoVo.setViewCount(videoMap.get(myVideoVo.getId()).getViewCount());
+        });
+        vo.setList(myVideoVos);
+        return vo;
     }
 }

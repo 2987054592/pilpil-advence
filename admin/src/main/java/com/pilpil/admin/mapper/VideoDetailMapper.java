@@ -2,7 +2,7 @@ package com.pilpil.admin.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.pilpil.comment.entity.po.VideoDetail;
+import com.pilpil.common.entity.po.VideoDetail;
 
 /**
  * <p>

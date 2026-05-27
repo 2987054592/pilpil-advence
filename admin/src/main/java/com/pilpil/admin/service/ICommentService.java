@@ -2,7 +2,7 @@ package com.pilpil.admin.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.pilpil.comment.entity.po.Comment;
+import com.pilpil.common.entity.po.Comment;
 
 /**
  * <p>

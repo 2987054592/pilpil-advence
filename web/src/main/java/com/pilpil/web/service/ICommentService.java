@@ -2,7 +2,7 @@ package com.pilpil.web.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.pilpil.comment.entity.po.Comment;
+import com.pilpil.common.entity.po.Comment;
 import com.pilpil.web.entity.dto.CommentDto;
 import com.pilpil.web.entity.dto.QueryCommentDto;
 import com.pilpil.web.entity.vo.QueryCommentVo;

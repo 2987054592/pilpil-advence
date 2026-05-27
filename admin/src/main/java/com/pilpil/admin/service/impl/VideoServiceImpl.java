@@ -2,27 +2,27 @@ package com.pilpil.admin.service.impl;
 
 
 import cn.hutool.core.bean.BeanUtil;
-import com.pilpil.comment.entity.dto.VideoReview;
+import com.pilpil.common.entity.dto.VideoReview;
 import com.pilpil.admin.mapper.VideoMapper;
 import com.pilpil.admin.service.IVideoService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.pilpil.comment.entity.dto.queryVideo;
-import com.pilpil.comment.entity.po.User;
-import com.pilpil.comment.entity.po.Video;
-import com.pilpil.comment.entity.po.VideoDetail;
-import com.pilpil.comment.entity.vo.VideoDetails;
-import com.pilpil.comment.entity.vo.VideoDocVo;
-import com.pilpil.comment.entity.vo.VideoVo;
-import com.pilpil.comment.enums.VideoStatus;
-import com.pilpil.comment.exception.illegalException;
-import com.pilpil.comment.utils.Escommpent;
+import com.pilpil.common.entity.dto.queryVideo;
+import com.pilpil.common.entity.po.User;
+import com.pilpil.common.entity.po.Video;
+import com.pilpil.common.entity.po.VideoDetail;
+import com.pilpil.common.entity.vo.VideoDetails;
+import com.pilpil.common.entity.vo.VideoDocVo;
+import com.pilpil.common.entity.vo.VideoVo;
+import com.pilpil.common.enums.VideoStatus;
+import com.pilpil.common.exception.illegalException;
+import com.pilpil.common.utils.Escommpent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.pilpil.comment.constants.Exception.exceptionConstants.Video.MAIN_VIDEO_STATUS_ERROR;
-import static com.pilpil.comment.constants.Exception.exceptionConstants.Video.VIDEO_NOT_EXIST;
+import static com.pilpil.common.constants.Exception.exceptionConstants.Video.MAIN_VIDEO_STATUS_ERROR;
+import static com.pilpil.common.constants.Exception.exceptionConstants.Video.VIDEO_NOT_EXIST;
 
 /**
  * <p>

@@ -1,7 +1,7 @@
 package com.pilpil.web.util;
 
-import com.pilpil.comment.entity.po.Comment;
-import com.pilpil.comment.entity.po.VideoData;
+import com.pilpil.common.entity.po.Comment;
+import com.pilpil.common.entity.po.VideoData;
 import com.pilpil.web.service.ICommentService;
 import com.pilpil.web.service.IVideoDataService;
 import jakarta.annotation.PreDestroy;
@@ -13,13 +13,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.pilpil.comment.constants.redis.redisContanst.Comment.COMMENT_LIST_PREFIX;
-import static com.pilpil.comment.constants.redis.redisContanst.Comment.COMMENT_TOTAL;
-import static com.pilpil.comment.constants.redis.redisContanst.Video.VIDEO_PLAY_PREFIX;
+import static com.pilpil.common.constants.redis.redisContanst.Comment.COMMENT_LIST_PREFIX;
+import static com.pilpil.common.constants.redis.redisContanst.Comment.COMMENT_TOTAL;
+import static com.pilpil.common.constants.redis.redisContanst.Like.LIKE_COMMENT_PREFIX;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -30,17 +30,18 @@ public class CommentToMysql {
     @Scheduled(cron = "0 0/1 * * * ?")
     @Transactional
     public void run(){
-        log.info("开始同步评论数到数据库");
-        PlayCount();
-        log.info("同步步评论数到数据库完成");
+        log.info("开始同步评论相关");
+        Comment();
+        CommentLike();
+        log.info("评论相关同步完成");
     }
 
     @PreDestroy
     public void PreDestroy(){
-        log.info("程序退出，开始同步评论数");
-        PlayCount();
+        log.info("程序退出，开始同步评论相关");
+        Comment();
     }
-    private void PlayCount() {
+    private void Comment() {
         Set<String> keys = redisTemplate.keys(COMMENT_LIST_PREFIX + "*");
         for (String key : keys){
             String videoIdStr = key.replace(COMMENT_LIST_PREFIX, "");
@@ -69,6 +70,24 @@ public class CommentToMysql {
                     redisTemplate.opsForHash().delete(key,section);
                 }
             });
+        }
+    }
+    private void CommentLike(){
+        Set<String> keys = redisTemplate.keys(LIKE_COMMENT_PREFIX + "*");
+        if(keys==null || keys.isEmpty()){
+            return;
+        }
+        for (String key : keys){
+            Map<Object, Object> HashData = redisTemplate.opsForHash().entries(key);
+            HashData.forEach((sectionObj,countObj)->{
+                int bizId = Integer.parseInt(sectionObj.toString());
+                int addCount = Integer.parseInt(countObj.toString());
+                commentService.lambdaUpdate()
+                        .eq(Comment::getId, bizId)
+                        .setSql("like_count = IFNULL(like_count, 0) + " + addCount)
+                        .update();
+            });
+            redisTemplate.delete(key);
         }
     }
 

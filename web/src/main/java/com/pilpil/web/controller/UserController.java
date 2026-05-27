@@ -1,11 +1,11 @@
 package com.pilpil.web.controller;
 
 
-import com.pilpil.comment.entity.Result;
-import com.pilpil.comment.entity.vo.UserVoDetail;
+import com.pilpil.common.entity.Result;
+import com.pilpil.common.entity.vo.UserVoDetail;
 import com.pilpil.web.entity.dto.UserDto;
 
-import com.pilpil.comment.entity.vo.UserVo;
+import com.pilpil.common.entity.vo.UserVo;
 import com.pilpil.web.service.IUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

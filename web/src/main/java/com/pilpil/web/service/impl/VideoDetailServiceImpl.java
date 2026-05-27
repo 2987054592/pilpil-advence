@@ -1,7 +1,7 @@
 package com.pilpil.web.service.impl;
 
 
-import com.pilpil.comment.entity.po.VideoDetail;
+import com.pilpil.common.entity.po.VideoDetail;
 import com.pilpil.web.mapper.VideoDetailMapper;
 import com.pilpil.web.service.IVideoDetailService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;

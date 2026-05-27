@@ -1,15 +1,18 @@
 package com.pilpil.web.controller;
 
 
-import com.pilpil.comment.entity.Result;
-import com.pilpil.comment.entity.dto.queryVideo;
-import com.pilpil.comment.entity.po.VideoDoc;
-import com.pilpil.comment.entity.vo.VideoDocVo;
-import com.pilpil.comment.entity.vo.VideoVo;
+import com.pilpil.common.entity.Result;
+import com.pilpil.common.entity.dto.queryVideo;
+import com.pilpil.common.entity.vo.VideoDocVo;
+import com.pilpil.common.entity.vo.VideoVo;
+import com.pilpil.web.entity.vo.MyVideoList;
+import com.pilpil.web.entity.vo.MyVideoVo;
 import com.pilpil.web.entity.dto.VideoDto;
 import com.pilpil.web.service.IVideoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * <p>
@@ -38,5 +41,9 @@ public class VideoController {
     @GetMapping
     public Result<VideoVo> getVideo(Integer id){
         return Result.success(videoService.getByIdc(id));
+    }
+    @PostMapping("/me")
+    public Result<MyVideoList> getMyVideo(@RequestBody queryVideo queryVideo){
+        return Result.success(videoService.getMyVideo(queryVideo));
     }
 }

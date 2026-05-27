@@ -1,11 +1,11 @@
 package com.pilpil.web.service;
 
-import com.pilpil.comment.entity.po.User;
-import com.pilpil.comment.entity.vo.UserVoDetail;
+import com.pilpil.common.entity.po.User;
+import com.pilpil.common.entity.vo.UserVoDetail;
 import com.pilpil.web.entity.dto.UserDto;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.pilpil.comment.entity.vo.UserVo;
+import com.pilpil.common.entity.vo.UserVo;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 

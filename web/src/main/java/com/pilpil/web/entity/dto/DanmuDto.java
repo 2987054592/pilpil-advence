@@ -1,6 +1,6 @@
 package com.pilpil.web.entity.dto;
 
-import com.pilpil.comment.enums.DanmuPosition;
+import com.pilpil.common.enums.DanmuPosition;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

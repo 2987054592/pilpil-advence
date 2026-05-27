@@ -4,7 +4,7 @@ package com.pilpil.admin.service.impl;
 import com.pilpil.admin.mapper.CommentMapper;
 import com.pilpil.admin.service.ICommentService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.pilpil.comment.entity.po.Comment;
+import com.pilpil.common.entity.po.Comment;
 import org.springframework.stereotype.Service;
 
 /**

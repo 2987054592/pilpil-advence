@@ -4,20 +4,20 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import cn.hutool.json.JSONUtil;
-import com.pilpil.comment.constants.Exception.exceptionConstants;
+import com.pilpil.common.constants.Exception.exceptionConstants;
 
-import com.pilpil.comment.constants.redis.redisContanst;
-import com.pilpil.comment.entity.UserInfo;
-import com.pilpil.comment.entity.po.User;
-import com.pilpil.comment.entity.vo.UserVoDetail;
-import com.pilpil.comment.enums.LevelType;
-import com.pilpil.comment.enums.SexType;
-import com.pilpil.comment.enums.StatusType;
-import com.pilpil.comment.exception.illegalException;
-import com.pilpil.comment.utils.UserHolder;
+import com.pilpil.common.constants.redis.redisContanst;
+import com.pilpil.common.entity.UserInfo;
+import com.pilpil.common.entity.po.User;
+import com.pilpil.common.entity.vo.UserVoDetail;
+import com.pilpil.common.enums.LevelType;
+import com.pilpil.common.enums.SexType;
+import com.pilpil.common.enums.StatusType;
+import com.pilpil.common.exception.illegalException;
+import com.pilpil.common.utils.UserHolder;
 import com.pilpil.web.entity.dto.UserDto;
 
-import com.pilpil.comment.entity.vo.UserVo;
+import com.pilpil.common.entity.vo.UserVo;
 
 import com.pilpil.web.mapper.UserMapper;
 import com.pilpil.web.service.IUserService;
@@ -33,8 +33,8 @@ import java.time.LocalDate;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import static com.pilpil.comment.constants.Exception.exceptionConstants.User.EMAIL_EXIST;
-import static com.pilpil.comment.constants.Exception.exceptionConstants.User.EMAIL_NULL;
+import static com.pilpil.common.constants.Exception.exceptionConstants.User.EMAIL_EXIST;
+import static com.pilpil.common.constants.Exception.exceptionConstants.User.EMAIL_NULL;
 
 /**
  * <p>

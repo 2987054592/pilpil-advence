@@ -1,14 +1,13 @@
 package com.pilpil.web.entity.vo;
 
-import com.pilpil.comment.enums.CommentTopType;
-import com.pilpil.comment.enums.LevelType;
+import com.pilpil.common.enums.CommentTopType;
+import com.pilpil.common.enums.LevelType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @AllArgsConstructor
 @Builder

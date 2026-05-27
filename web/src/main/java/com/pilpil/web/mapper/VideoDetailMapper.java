@@ -2,7 +2,7 @@ package com.pilpil.web.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.pilpil.comment.entity.po.VideoDetail;
+import com.pilpil.common.entity.po.VideoDetail;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;

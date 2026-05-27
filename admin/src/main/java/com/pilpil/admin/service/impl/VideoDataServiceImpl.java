@@ -3,7 +3,7 @@ package com.pilpil.admin.service.impl;
 import com.pilpil.admin.mapper.VideoDataMapper;
 import com.pilpil.admin.service.IVideoDataService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.pilpil.comment.entity.po.VideoData;
+import com.pilpil.common.entity.po.VideoData;
 import org.springframework.stereotype.Service;
 
 /**

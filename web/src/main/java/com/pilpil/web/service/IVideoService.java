@@ -2,12 +2,12 @@ package com.pilpil.web.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.pilpil.comment.entity.dto.queryVideo;
-import com.pilpil.comment.entity.po.Video;
-import com.pilpil.comment.entity.po.VideoDoc;
-import com.pilpil.comment.entity.vo.VideoDocVo;
-import com.pilpil.comment.entity.vo.VideoVo;
+import com.pilpil.common.entity.dto.queryVideo;
+import com.pilpil.common.entity.po.Video;
+import com.pilpil.common.entity.vo.VideoDocVo;
+import com.pilpil.common.entity.vo.VideoVo;
 import com.pilpil.web.entity.dto.VideoDto;
+import com.pilpil.web.entity.vo.MyVideoList;
 
 /**
  * <p>
@@ -24,4 +24,6 @@ public interface IVideoService extends IService<Video> {
     VideoDocVo getVideo(queryVideo queryVideo);
 
     VideoVo getByIdc(Integer id);
+
+    MyVideoList getMyVideo(queryVideo queryVideo);
 }

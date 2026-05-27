@@ -1,9 +1,8 @@
 package com.pilpil.web.util;
 
 import cn.hutool.json.JSONUtil;
-import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
-import com.pilpil.comment.entity.po.Danmu;
-import com.pilpil.comment.entity.po.VideoData;
+import com.pilpil.common.entity.po.Danmu;
+import com.pilpil.common.entity.po.VideoData;
 import com.pilpil.web.service.IDanmuService;
 import com.pilpil.web.service.IVideoDataService;
 import jakarta.annotation.PreDestroy;
@@ -18,7 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.pilpil.comment.constants.redis.redisContanst.Danmu.*;
+import static com.pilpil.common.constants.redis.redisContanst.Danmu.*;
+import static com.pilpil.common.constants.redis.redisContanst.Like.LIKE_DANMU_PREFIX;
 
 @Component
 @RequiredArgsConstructor
@@ -30,16 +30,19 @@ public class DanmuToMysql {
     @Scheduled(cron = "0 0/1 * * * ?")
     @Transactional
     public void Tomysql(){
+        log.info("开始同步弹幕相关");
         DanmuDataToMysql();
         DanmuStatisticToMysql();
-        //TODO弹幕的点赞
+        DanmuLikeToMysql();
+        log.info("同步弹幕相关完成");
 
     }
     @PreDestroy
     public void destroy(){
-        log.info("程序退出，开始同步弹幕数据");
+        log.info("程序退出，开始同步弹幕相关");
         DanmuDataToMysql();
         DanmuStatisticToMysql();
+        DanmuLikeToMysql();
     }
 
     private void DanmuStatisticToMysql() {
@@ -57,10 +60,8 @@ public class DanmuToMysql {
                 int addCount = Integer.parseInt(countObj.toString());
                 String videoIdStr = key.replace(DANMU_LIST_PREFIX, "");
                 Integer videoId = Integer.valueOf(videoIdStr);
-                Integer sectionId = Integer.valueOf(sectionIdStr);
                 boolean success = videoDataService.lambdaUpdate()
                         .eq(VideoData::getVideoId, videoId)
-                        .eq(VideoData::getSectionId, sectionId)
                         .setSql("danmu_count = IFNULL(danmu_count, 0) + " + addCount)
                         .update();
                 if(success){
@@ -71,12 +72,9 @@ public class DanmuToMysql {
             });
 
         }
-
-        log.info("弹幕增量同步完成");
     }
 
     private boolean DanmuDataToMysql() {
-        log.info("开始同步弹幕到数据库");
         Set<String> keys = redisTemplate.keys(DAMU_TEMPT_PREFIX + "*");
         if(keys==null || keys.isEmpty()){
             return true;
@@ -97,6 +95,24 @@ public class DanmuToMysql {
             }
         }
         return false;
+    }
+    private void DanmuLikeToMysql(){
+        Set<String> keys = redisTemplate.keys(LIKE_DANMU_PREFIX + "*");
+        if(keys==null || keys.isEmpty()){
+            return;
+        }
+        for (String key : keys) {
+            Map<Object, Object> HashData = redisTemplate.opsForHash().entries(key);
+            HashData.forEach((bizid,count)->{
+                int bizId = Integer.parseInt(bizid.toString());
+                int count1 = Integer.parseInt(count.toString());
+                danmuService.lambdaUpdate()
+                        .eq(Danmu::getId, bizId)
+                        .setSql("like_count = IFNULL(like_count, 0) + " + count1)
+                        .update();
+            });
+            redisTemplate.delete(key);
+        }
     }
 
 

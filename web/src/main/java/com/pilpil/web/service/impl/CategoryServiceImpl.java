@@ -1,9 +1,9 @@
 package com.pilpil.web.service.impl;
 
 import cn.hutool.json.JSONUtil;
-import com.pilpil.comment.constants.redis.redisContanst;
-import com.pilpil.comment.entity.po.Category;
-import com.pilpil.comment.entity.vo.CategoryVo;
+import com.pilpil.common.constants.redis.redisContanst;
+import com.pilpil.common.entity.po.Category;
+import com.pilpil.common.entity.vo.CategoryVo;
 import com.pilpil.web.mapper.CategoryMapper;
 import com.pilpil.web.service.ICategoryService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -12,10 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * <p>

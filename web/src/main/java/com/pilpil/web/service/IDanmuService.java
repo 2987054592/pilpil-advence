@@ -2,7 +2,7 @@ package com.pilpil.web.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.pilpil.comment.entity.po.Danmu;
+import com.pilpil.common.entity.po.Danmu;
 import com.pilpil.web.entity.dto.DanmuDto;
 import com.pilpil.web.entity.dto.queryDanmuDto;
 import com.pilpil.web.entity.vo.DanmuVo;

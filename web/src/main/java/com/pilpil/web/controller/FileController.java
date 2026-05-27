@@ -3,19 +3,15 @@ package com.pilpil.web.controller;
 import cn.hutool.json.JSONUtil;
 import com.aliyun.oss.model.PartETag;
 import com.aliyun.oss.model.PartSummary;
-import com.pilpil.comment.entity.Result;
-import com.pilpil.comment.entity.dto.VideofileDto;
-import com.pilpil.comment.entity.vo.UploadIniVo;
-import com.pilpil.comment.utils.FileOperater;
-import jakarta.annotation.PostConstruct;
-import jakarta.json.Json;
+import com.pilpil.common.entity.Result;
+import com.pilpil.common.entity.vo.UploadIniVo;
+import com.pilpil.common.utils.FileOperater;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/file")
