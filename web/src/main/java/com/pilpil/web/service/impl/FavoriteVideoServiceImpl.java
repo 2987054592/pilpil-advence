@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import static com.pilpil.common.constants.Exception.exceptionConstants.Favorite.FAVORITE_NOT_EXIST;
 import static com.pilpil.common.constants.Exception.exceptionConstants.Favorite.FAVORITE_VIDEO_EXIST;
 import static com.pilpil.common.constants.Exception.exceptionConstants.User.USER_DELETE_ERROR;
+import static com.pilpil.common.constants.Exception.exceptionConstants.Video.VIDEO_DELETE_ERROR;
 import static com.pilpil.common.constants.Exception.exceptionConstants.Video.VIDEO_NOT_EXIST;
 
 /**
@@ -40,6 +41,9 @@ public class FavoriteVideoServiceImpl extends ServiceImpl<FavoriteVideoMapper, F
     private final IVideoService videoService;
     private final IVideoDataService videoDataService;
     private final IUserService userService;
+    private final User user=new User(USER_DELETE_ERROR,"",LevelType.LV0,0L);
+    private final Video video=new Video("",VIDEO_DELETE_ERROR,0L,0L);
+    private final VideoData videoData=new VideoData(0,0);
 
     @Override
     @Transactional
@@ -116,13 +120,13 @@ public class FavoriteVideoServiceImpl extends ServiceImpl<FavoriteVideoMapper, F
         List<FavoriteVideoVo> vo=new ArrayList<>(list.size());
         for (FavoriteVideo favoriteVideo : list) {
             FavoriteVideoVo build = FavoriteVideoVo.builder()
-                    .cover(videoMap.get(favoriteVideo.getVideoId()).getCover())
+                    .cover(videoMap.get(favoriteVideo.getVideoId())==null?video.getCover():videoMap.get(favoriteVideo.getVideoId()).getCover())
                     .createTime(favoriteVideo.getCreateTime())
-                    .VideoName(videoMap.get(favoriteVideo.getVideoId()).getName())
-                    .authorName(userMap.get(videoMap.get(favoriteVideo.getVideoId()).getAuthorId()).getNickName())
-                    .danmuCount(videoDataMap.get(favoriteVideo.getVideoId()).getDanmuCount())
-                    .durationTotal(videoMap.get(favoriteVideo.getVideoId()).getDurationTotal())
-                    .viewCount(videoDataMap.get(favoriteVideo.getVideoId()).getViewCount())
+                    .VideoName(videoMap.get(favoriteVideo.getVideoId())==null?video.getName():videoMap.get(favoriteVideo.getVideoId()).getName())
+                    .authorName(userMap.getOrDefault(videoMap.getOrDefault(favoriteVideo.getVideoId(), video).getAuthorId(), user).getNickName())
+                    .danmuCount(Optional.ofNullable(videoDataMap.get(favoriteVideo.getVideoId())).map(VideoData::getDanmuCount).orElse(0))
+                    .durationTotal(videoMap.get(favoriteVideo.getVideoId())==null?video.getDurationTotal():videoMap.get(favoriteVideo.getVideoId()).getDurationTotal())
+                    .viewCount(Optional.ofNullable(videoDataMap.get(favoriteVideo.getVideoId())).map(VideoData::getViewCount).orElse(0))
                     .videoId(favoriteVideo.getVideoId())
                     .build();
             vo.add(build);

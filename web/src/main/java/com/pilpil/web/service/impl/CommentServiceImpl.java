@@ -6,6 +6,7 @@ import com.pilpil.common.entity.po.Comment;
 import com.pilpil.common.entity.po.User;
 import com.pilpil.common.enums.CommentTopType;
 import com.pilpil.common.enums.LevelType;
+import com.pilpil.common.enums.StatusType;
 import com.pilpil.common.utils.UserHolder;
 import com.pilpil.web.entity.dto.CommentDto;
 import com.pilpil.web.entity.dto.QueryCommentDto;
@@ -41,6 +42,7 @@ import static com.pilpil.common.constants.redis.redisContanst.Comment.COMMENT_TO
 public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> implements ICommentService {
     private final IUserService userService;
     private final StringRedisTemplate redisTemplate;
+    private final User user=new User(USER_DELETE_ERROR,"",LevelType.LV0);
     @Override
     public void saveComment(CommentDto commentDto) {
         Integer videoId = commentDto.getVideoId();
@@ -130,23 +132,26 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
                 .eq(Comment::getRootId, commentId)
                 .page(new Page<>(pageNum, pageSize));
         QueryCommentVo vo = new QueryCommentVo();
+        if(page==null|| page.getRecords().isEmpty()){
+            vo.setCommentList(Collections.emptyList());
+            vo.setTotalPage(0);
+            vo.setTotalData(0);
+            return vo;
+        }
         vo.setTotalData((int) page.getTotal());
         vo.setTotalPage((int) page.getPages());
         List<Comment> records = page.getRecords();
-        if (records == null || records.isEmpty()) {
-            vo.setCommentList(Collections.emptyList());
-            return vo;
-        }
-        User user = new User();
-        user.setAvatar("");
-        user.setNickName(USER_DELETE_ERROR);
-        user.setLevel(LevelType.LV0);
         Set<Long> userIds = records.stream().map(Comment::getAuthorId).collect(Collectors.toSet());
         List<User> users = userService.getBaseMapper().selectByIds(userIds);
         Map<Long, User> userMap = users.stream().collect(Collectors.toMap(User::getId, u -> u));
         List<CommentVo> vos = records.stream().map(comment -> {
             Long authorId = comment.getAuthorId();
             User author = userMap.get(authorId);
+            if(author!=null) {
+                if (author.getStatus().equals(StatusType.BAN)) {
+                    author = null;
+                }
+            }
             return CommentVo.builder()
                     .id(comment.getId())
                     .level(author==null ? user.getLevel() : author.getLevel())
@@ -172,23 +177,24 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
                 .eq(Comment::getRootId, 0)
                 .page(new Page<>(pageNum, pageSize));
         QueryCommentVo vo = new QueryCommentVo();
+        if(page==null|| page.getRecords().isEmpty()){
+            vo.setCommentList(Collections.emptyList());
+            vo.setTotalPage(0);
+            vo.setTotalData(0);
+            return vo;
+        }
         vo.setTotalData((int) page.getTotal());
         vo.setTotalPage((int) page.getPages());
         List<Comment> records = page.getRecords();
-        if (records == null || records.isEmpty()) {
-            vo.setCommentList(Collections.emptyList());
-            return vo;
-        }
-        User user = new User();
-            user.setAvatar("");
-            user.setNickName(USER_DELETE_ERROR);
-            user.setLevel(LevelType.LV0);
         Set<Long> userIds = records.stream().map(Comment::getAuthorId).collect(Collectors.toSet());
         List<User> users = userService.getBaseMapper().selectByIds(userIds);
         Map<Long, User> userMap = users.stream().collect(Collectors.toMap(User::getId, u -> u));
         List<CommentVo> list = records.stream().map(comment -> {
             Long authorId = comment.getAuthorId();
             User author = userMap.get(authorId);
+            if (author.getStatus().equals(StatusType.BAN)) {
+                author=null;
+            }
             CommentVo commentVo = new CommentVo();
             commentVo.setId(comment.getId());
             commentVo.setAuthorAvatar(author==null ? user.getAvatar() : author.getAvatar());

@@ -29,6 +29,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.pilpil.common.constants.Exception.exceptionConstants.Video.VIDEO_DELETE_ERROR;
 import static com.pilpil.common.constants.Exception.exceptionConstants.Video.VIDEO_NOT_EXIST;
 import static com.pilpil.common.constants.redis.redisContanst.Video.VIDEO_PLAY_PREFIX;
 import static com.pilpil.common.constants.redis.redisContanst.Video.VIDEO_RECORD_PREFIX;
@@ -49,9 +50,13 @@ public class VideoRecordServiceImpl extends ServiceImpl<VideoRecordMapper, Video
     private final DelayTaskHnader delayTaskHnader;
     private final IVideoService videoService;
     private final IVideoDetailService videoDetailService;
-    private final IVideoService userService;
     @Override
     public void saveRecord(VideoRecordDto videoRecordDto) {
+        Integer videoId = videoRecordDto.getVideoId();
+        Video video = videoService.getById(videoId);
+        if(video==null){
+            throw new illegalException(VIDEO_NOT_EXIST);
+        }
         Long userId = UserHolder.get().getId();
         VideoRecord videoRecord = searchRecord(videoRecordDto);
         if(videoRecord==null){
@@ -150,11 +155,11 @@ public class VideoRecordServiceImpl extends ServiceImpl<VideoRecordMapper, Video
 
         for(VideoRecord record:records){
             VideoRecordVo vo1 = new VideoRecordVo();
-            vo1.setVideoName(videoMap.get(record.getVideoId()).getName());
-            vo1.setCover(videoMap.get(record.getVideoId()).getCover());
+            vo1.setVideoName(Optional.ofNullable(videoMap.get(record.getVideoId())).map(Video::getName).orElse(VIDEO_NOT_EXIST));
+            vo1.setCover(Optional.ofNullable(videoMap.get(record.getVideoId())).map(Video::getCover).orElse(""));
             vo1.setTime(record.getUpdateTime());
             vo1.setMoment(record.getMoment());
-            vo1.setDurationTotal(videoMap.get(record.getVideoId()).getDurationTotal());
+            vo1.setDurationTotal(Optional.ofNullable(videoMap.get(record.getVideoId())).map(Video::getDurationTotal).orElse(0L));
             vo1.setVideoId(record.getVideoId());
             vos.add(vo1);
         }

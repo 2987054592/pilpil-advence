@@ -38,7 +38,7 @@ public class UserController {
         return Result.success(userService.code(email));
     }
     @PostMapping("/login")
-    public Result login(@RequestBody UserDto userDto, HttpServletResponse response){
+    public Result<UserVo> login(@RequestBody UserDto userDto, HttpServletResponse response){
         UserVo user=userService.login(userDto,response);
         return Result.success(user);
     }
@@ -50,5 +50,14 @@ public class UserController {
     @GetMapping("/me")
     public Result<UserVoDetail> me() {
         return Result.success(userService.me());
+    }
+
+    @GetMapping("/info")
+    public Result<UserVoDetail> info(String name){
+        return Result.success(userService.info(name));
+    }
+    @GetMapping("/info/simple")
+    public Result<UserVo> infoSimple(String name){
+        return Result.success(userService.infoSimple(name));
     }
 }

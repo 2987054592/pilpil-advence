@@ -10,7 +10,7 @@ public interface exceptionConstants {
         String EMAIL_EXIST = "邮箱已存在";
         String EMAIL_NULL = "邮箱不能为空";
         String USER_STATUS_ERROR = "用户状态异常";
-        String USER_DELETE_ERROR = "用户已注销";
+        String USER_DELETE_ERROR = "用户已注销或封禁";
     }
     interface Category{
         String CATEGORY_EXIST = "分类已存在";
@@ -21,6 +21,7 @@ public interface exceptionConstants {
         String VIDEO_NOT_EXIST = "视频不存在";
         String VIDEO_STATUS_ERROR = "视频未审核或封禁";
         String MAIN_VIDEO_STATUS_ERROR = "主视频未审核或封禁";
+        String VIDEO_DELETE_ERROR = "视频已删除";
     }
     interface Danmu{
         String DAMU_NOT_OWNER = "弹幕不属于当前用户";
@@ -43,5 +44,9 @@ public interface exceptionConstants {
         String FAVORITE_VIDEO_EXIST = "视频已收藏";
         String FAVORITE_VIDEO_NOT_EXIST = "视频未收藏";
 
+    }
+    interface File{
+        String FILE_NOT_EXIST = "文件不存在";
+        String FILE_IS_EXIST = "文件已存在";
     }
 }

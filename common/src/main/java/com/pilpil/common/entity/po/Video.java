@@ -9,6 +9,7 @@ import java.io.Serializable;
 
 import com.pilpil.common.enums.VideoStatus;
 import com.pilpil.common.enums.VideoType;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -27,6 +28,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @TableName("video")
 @Builder
+@AllArgsConstructor
 public class Video implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -81,5 +83,14 @@ public class Video implements Serializable {
      * 视频的总时长
      */
     private Long durationTotal;
+
+    public Video(String cover,String name,Long authorId,Long durationTotal){
+        this.cover=cover;
+        this.name=name;
+        this.authorId=authorId;
+        this.durationTotal=durationTotal;
+    }
+    public Video(){}
+
 
 }

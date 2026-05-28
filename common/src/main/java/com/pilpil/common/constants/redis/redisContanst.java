@@ -35,8 +35,9 @@ public interface redisContanst {
      interface Coin{
          String COIN_INCRE_PREFIX = "COIN:INCRE:";
      }
-     interface Favorite{
-         String FAVORITE_INCRE_PREFIX = "FAVORITE:INCRE:";
+     interface Fans{
+         String FANS_FOLLOW_PREFIX = "FANS:FOLLOW:";
+         String FANS_FOLLOWER_PREFIX = "FANS:FOLLOWER:";
      }
 
 

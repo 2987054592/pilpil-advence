@@ -30,7 +30,14 @@ public class MvcConfig implements WebMvcConfigurer {
                         "/danmu/list",
                         "/video/record/play",
                         "/comment",
-                        "/coin"
+                        "/coin",
+                        "/user/info",
+                        "/user/info/simple",
+                        "/favorite/list",
+                        "/video/me",
+                        "/fans/is",
+                        "/fans/list",
+                        "/fans/list/follower"
                 ).order(1);
         registry.addInterceptor(new RefreshTokenIntercreptor(redisTemplate)).order(0);
     }

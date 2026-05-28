@@ -15,4 +15,5 @@ public class queryVideo {
     private String name;
     private String categoryId;
     private String tags;
+    private Long userId;
 }

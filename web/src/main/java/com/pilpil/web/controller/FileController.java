@@ -4,8 +4,11 @@ import cn.hutool.json.JSONUtil;
 import com.aliyun.oss.model.PartETag;
 import com.aliyun.oss.model.PartSummary;
 import com.pilpil.common.entity.Result;
+import com.pilpil.common.entity.po.VideoDetail;
 import com.pilpil.common.entity.vo.UploadIniVo;
+import com.pilpil.common.exception.illegalException;
 import com.pilpil.common.utils.FileOperater;
+import com.pilpil.web.mapper.VideoDetailMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,14 +16,18 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.pilpil.common.constants.Exception.exceptionConstants.File.FILE_IS_EXIST;
+
 @RestController
 @RequestMapping("/file")
 @RequiredArgsConstructor
 public class FileController {
     private final FileOperater fileOperater;
+    private final VideoDetailMapper videoDetailMapper;
     @PostMapping("/init")
     public Result initUpload(@RequestParam String fileName,
                              @RequestParam String md5){
+
         LocalDate now = LocalDate.now();
         String datePath = String.format("%d/%02d/%02d", now.getYear(), now.getMonthValue(), now.getDayOfMonth());
         String ossKey = "videos/" + datePath + "/" + md5 + "_" + fileName;
@@ -66,7 +73,7 @@ public class FileController {
                     return Result.error("PartETag 数据不完整，请检查上传的分片信息");
                 }
             }
-            
+
             fileOperater.completeUpload(uploadId, ossKey, list, fileId);
             UploadIniVo vo = UploadIniVo.builder()
                     .uploadId(uploadId)

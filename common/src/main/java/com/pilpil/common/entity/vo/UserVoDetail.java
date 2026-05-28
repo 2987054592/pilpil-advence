@@ -1,5 +1,6 @@
 package com.pilpil.common.entity.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.pilpil.common.enums.SexType;
 import com.pilpil.common.enums.StatusType;
 import lombok.AllArgsConstructor;
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class UserVoDetail {
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long id;
     private String email;
     private String nickName;
@@ -27,4 +29,6 @@ public class UserVoDetail {
     private Integer experience;
     private StatusType status;
     private String background;
+    private Integer fans;
+    private Integer follow;
 }

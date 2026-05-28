@@ -28,4 +28,8 @@ public interface IUserService extends IService<User> {
     void exit(HttpServletRequest request);
 
     UserVoDetail me();
+
+    UserVoDetail info(String name);
+
+    UserVo infoSimple(String name);
 }

@@ -2,6 +2,7 @@ package com.pilpil.admin.service.impl;
 
 
 import cn.hutool.core.bean.BeanUtil;
+import com.pilpil.admin.service.IVideoDataService;
 import com.pilpil.common.entity.dto.VideoReview;
 import com.pilpil.admin.mapper.VideoMapper;
 import com.pilpil.admin.service.IVideoService;
@@ -9,6 +10,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.pilpil.common.entity.dto.queryVideo;
 import com.pilpil.common.entity.po.User;
 import com.pilpil.common.entity.po.Video;
+import com.pilpil.common.entity.po.VideoData;
 import com.pilpil.common.entity.po.VideoDetail;
 import com.pilpil.common.entity.vo.VideoDetails;
 import com.pilpil.common.entity.vo.VideoDocVo;
@@ -20,7 +22,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
+import static com.pilpil.common.constants.Exception.exceptionConstants.User.USER_STATUS_ERROR;
 import static com.pilpil.common.constants.Exception.exceptionConstants.Video.MAIN_VIDEO_STATUS_ERROR;
 import static com.pilpil.common.constants.Exception.exceptionConstants.Video.VIDEO_NOT_EXIST;
 
@@ -38,6 +42,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     private final Escommpent escommpent;
     private final VideoDetailServiceImpl videoDetailService;
     private final UserServiceImpl userService;
+    private final IVideoDataService videoDataService;
     @Override
     public VideoDocVo getVideo(queryVideo queryVideo) {
         return escommpent.searchVideo(queryVideo, queryVideo.getPageNum(), queryVideo.getPageSize());
@@ -50,17 +55,25 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         if(video==null){
             throw new illegalException(VIDEO_NOT_EXIST);
         }
+
         List<VideoDetail> list = videoDetailService.lambdaQuery().eq(VideoDetail::getVideoId, id).list();
         List<VideoDetails> videoDetails = BeanUtil.copyToList(list, VideoDetails.class);
-        //TODO播放量，收藏，点赞，投币，弹幕
+        VideoData data = videoDataService.lambdaQuery()
+                .eq(VideoData::getVideoId, id).one();
+        long DanmuCount = Optional.ofNullable(data.getDanmuCount()).orElse(0);
+        long PlayCount = Optional.ofNullable(data.getViewCount()).orElse(0);
+        long LikeCount = Optional.ofNullable(data.getLikeCount()).orElse(0);
+        long CoinCount = Optional.ofNullable(data.getCoinCount()).orElse(0);
+        long collectCount = Optional.ofNullable(data.getCollectCount()).orElse(0);
+        long commentCount = Optional.ofNullable(data.getCommentCount()).orElse(0);
         VideoVo bean = BeanUtil.toBean(video, VideoVo.class);
-        bean.setAuthorName(user.getNickName());
-        bean.setCoinCount(0);
-        bean.setLikeCount(0);
-        bean.setFavoriteCount(0);
-        bean.setPlayCountTotal(0);
-        bean.setDanmakuCountTotal(0);
-
+        bean.setAuthorName(user==null?USER_STATUS_ERROR:user.getNickName());
+        bean.setCoinCount((int) CoinCount);
+        bean.setLikeCount((int) LikeCount);
+        bean.setFavoriteCount((int) collectCount);
+        bean.setPlayCountTotal((int)PlayCount);
+        bean.setDanmakuCountTotal((int)DanmuCount);
+        bean.setCommentCount((int)commentCount);
         bean.setVideoDetails(videoDetails);
         return bean;
 

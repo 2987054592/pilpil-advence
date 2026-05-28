@@ -1,14 +1,19 @@
 package com.pilpil.web.service.impl;
 
+import com.pilpil.common.entity.po.Comment;
+import com.pilpil.common.entity.po.User;
 import com.pilpil.common.enums.LikeBisType;
 import com.pilpil.common.enums.LikeType;
+import com.pilpil.common.enums.StatusType;
 import com.pilpil.common.exception.illegalException;
 import com.pilpil.common.entity.po.Like;
 import com.pilpil.common.utils.UserHolder;
 import com.pilpil.web.entity.dto.likeDto;
 import com.pilpil.web.mapper.LikeMapper;
+import com.pilpil.web.service.ICommentService;
 import com.pilpil.web.service.ILikeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.pilpil.web.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -22,6 +27,7 @@ import java.util.stream.Collectors;
 
 import static com.pilpil.common.constants.Exception.exceptionConstants.Like.LIKE_EXIST;
 import static com.pilpil.common.constants.Exception.exceptionConstants.Like.LIKE_NOT_EXIST;
+import static com.pilpil.common.constants.Exception.exceptionConstants.User.USER_STATUS_ERROR;
 import static com.pilpil.common.constants.redis.redisContanst.Like.*;
 
 /**
@@ -40,6 +46,8 @@ public class LikeServiceImpl extends ServiceImpl<LikeMapper, Like> implements IL
     private final static String COMMENT_KEY = LIKE_COMMENT_PREFIX;
     private final static String DANMU_KEY = LIKE_DANMU_PREFIX;
     private final static String VIDEO_KEY= LIKE_VIDEO_PREFIX;
+    private final ICommentService commentService;
+    private final IUserService userService;
     @Override
     public void savelike(likeDto likeDto) {
         if(likeDto.getLikeType().equals(LikeType.LIKE)){
@@ -71,6 +79,18 @@ public class LikeServiceImpl extends ServiceImpl<LikeMapper, Like> implements IL
                 .bizId(bizId).build();
 
         if (likeBizType.equals(LikeBisType.COMMENT)) {
+            Comment comment = commentService.lambdaQuery()
+                    .eq(Comment::getId, bizId).one();
+            Long authorId = comment.getAuthorId();
+            User user = userService.lambdaQuery()
+                    .eq(User::getId, authorId).one();
+            if(user!=null){
+                if(user.getStatus().equals(StatusType.BAN)){
+                    throw new illegalException(USER_STATUS_ERROR);
+                }
+            }else{
+                throw new illegalException(USER_STATUS_ERROR);
+            }
             // 点赞评论
             redisTemplate.opsForHash().increment(COMMENT_KEY+videoId,bizId.toString(),1);
         }else if(likeBizType.equals(LikeBisType.DANMU)){
@@ -93,6 +113,18 @@ public class LikeServiceImpl extends ServiceImpl<LikeMapper, Like> implements IL
             return false;
         }
         if (likeBizType.equals(LikeBisType.COMMENT)) {
+            Comment comment = commentService.lambdaQuery()
+                    .eq(Comment::getId, bizId).one();
+            Long authorId = comment.getAuthorId();
+            User user = userService.lambdaQuery()
+                    .eq(User::getId, authorId).one();
+            if(user!=null){
+                if(user.getStatus().equals(StatusType.BAN)){
+                    throw new illegalException(USER_STATUS_ERROR);
+                }
+            }else{
+                throw new illegalException(USER_STATUS_ERROR);
+            }
             // 取消点赞评论
             redisTemplate.opsForHash().increment(COMMENT_KEY+videoId,bizId.toString(),-1);
         }else if(likeBizType.equals(LikeBisType.DANMU)){
@@ -111,6 +143,9 @@ public class LikeServiceImpl extends ServiceImpl<LikeMapper, Like> implements IL
                 .eq(Like::getUserId, UserHolder.get().getId())
                 .eq(Like::getVideoId, videoId)
                 .list();
+        if(list.isEmpty()){
+            return Collections.emptyMap();
+        }
         return list.stream().collect(Collectors.groupingBy(
                 Like::getLikeBizType,
                 Collectors.mapping(

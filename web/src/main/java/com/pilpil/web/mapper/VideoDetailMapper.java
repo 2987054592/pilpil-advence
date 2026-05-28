@@ -20,4 +20,6 @@ public interface VideoDetailMapper extends BaseMapper<VideoDetail> {
 
     @Select("select * from video_detail where id = #{id}")
     List<VideoDetail> selectByVideoId(Integer id);
+    @Select("select * from video_detail where hash = #{hash}")
+    VideoDetail selectByHash(String hash);
 }

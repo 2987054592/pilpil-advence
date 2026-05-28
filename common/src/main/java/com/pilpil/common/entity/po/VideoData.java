@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import java.time.LocalDate;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -22,6 +24,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @TableName("video_data")
+@AllArgsConstructor
 public class VideoData implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -67,6 +70,13 @@ public class VideoData implements Serializable {
      * 评论的数量
      */
     private Integer commentCount;
+
+    public VideoData(Integer danmuCount,Integer viewCount){
+        this.danmuCount=danmuCount;
+        this.viewCount=viewCount;
+
+    }
+    public VideoData(){}
 
 
 }

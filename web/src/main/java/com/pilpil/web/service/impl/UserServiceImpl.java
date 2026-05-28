@@ -20,6 +20,7 @@ import com.pilpil.web.entity.dto.UserDto;
 import com.pilpil.common.entity.vo.UserVo;
 
 import com.pilpil.web.mapper.UserMapper;
+import com.pilpil.web.service.IFansService;
 import com.pilpil.web.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,8 +34,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import static com.pilpil.common.constants.Exception.exceptionConstants.User.EMAIL_EXIST;
-import static com.pilpil.common.constants.Exception.exceptionConstants.User.EMAIL_NULL;
+import static com.pilpil.common.constants.Exception.exceptionConstants.User.*;
 
 /**
  * <p>
@@ -49,6 +49,7 @@ import static com.pilpil.common.constants.Exception.exceptionConstants.User.EMAI
 @Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
     private final StringRedisTemplate redisTemplate;
+    private final IFansService fansService;
 
     @Override
     public void saveUser(UserDto userDto) {
@@ -114,6 +115,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         String json = JSONUtil.toJsonStr(userInfo);
         redisTemplate.opsForValue().set(redisContanst.User.LOGIN_TOKEN_PREFIX+token, json);
         redisTemplate.expire(redisContanst.User.LOGIN_TOKEN_PREFIX+token, 1L, TimeUnit.DAYS);
+        Integer fans=fansService.getFansCount(user.getId());
+        Integer follow=fansService.getFollowerCount(user.getId());
         return UserVo.builder()
                 .nickName(user.getNickName())
                 .avatar(user.getAvatar())
@@ -121,9 +124,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                 .level(user.getLevel())
                 .experience(user.getExperience())
                 .introduction(user.getIntroduction())
-                //TODO:关注数,粉丝数
-                .fans(0)
-                .follow(0)
+                .fans(fans)
+                .follow(follow)
                 .build();
     }
 
@@ -139,6 +141,58 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public UserVoDetail me() {
         Long userId = UserHolder.get().getId();
         User user = getById(userId);
-        return BeanUtil.toBean(user, UserVoDetail.class);
+        UserVoDetail bean = BeanUtil.toBean(user, UserVoDetail.class);
+        bean.setFans(fansService.getFansCount(userId));
+        bean.setFollow(fansService.getFollowerCount(userId));
+        return bean;
+    }
+
+    @Override
+    public UserVoDetail info(String name) {
+        User user = lambdaQuery().eq(User::getNickName, name).one();
+        if(user==null){
+            throw new illegalException(exceptionConstants.User.USER_NOT_EXIST);
+        }
+        if(user.getStatus().equals(StatusType.BAN)){
+            throw new illegalException(USER_STATUS_ERROR);
+        }
+        UserVoDetail bean = BeanUtil.toBean(user, UserVoDetail.class);
+        bean.setFans(fansService.getFansCount(user.getId()));
+        bean.setFollow(fansService.getFollowerCount(user.getId()));
+        return bean;
+    }
+
+    @Override
+    public UserVo infoSimple(String name) {
+        User user = lambdaQuery().eq(User::getNickName, name).one();
+        if(user==null){
+            throw new illegalException(exceptionConstants.User.USER_NOT_EXIST);
+        }
+        Long userId = user.getId();
+        Integer fans=fansService.getFansCount(userId);
+        Integer follow=fansService.getFollowerCount(userId);
+        if(user.getStatus().equals(StatusType.BAN)){
+            return UserVo.builder()
+                    .nickName(USER_STATUS_ERROR)
+                    .avatar("")
+                    .currentCoin(0)
+                    .level(LevelType.LV0)
+                    .experience(0)
+                    .introduction("")
+                    .fans(fans)
+                    .follow(follow)
+                    .build();
+        }
+        return UserVo.builder()
+                .nickName(user.getNickName())
+                .avatar(user.getAvatar())
+                .currentCoin(user.getCurrentCoin())
+                .level(user.getLevel())
+                .experience(user.getExperience())
+                .introduction(user.getIntroduction())
+                .fans(fans)
+                .follow(follow)
+                .build();
+
     }
 }

@@ -107,5 +107,17 @@ public class User implements Serializable {
      */
     private String background;
 
+    public User(String nickName,String avatar,LevelType level,Long id){
+        this.nickName=nickName;
+        this.avatar=avatar;
+        this.level=level;
+        this.id=id;
+    }
+    public User(String nickName,String avatar,LevelType level){
+        this.nickName=nickName;
+        this.avatar=avatar;
+        this.level=level;
+    }
+
 
 }

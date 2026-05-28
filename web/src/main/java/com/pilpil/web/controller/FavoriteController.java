@@ -33,8 +33,8 @@ public class FavoriteController {
         favoriteService.saveFavorite(favoriteDto);
         return Result.success();
     }
-    @GetMapping
-    public Result<List<FavoriteVo>> getFavorite() {
-        return Result.success(favoriteService.getFavorite());
+    @GetMapping("/list")
+    public Result<List<FavoriteVo>> getFavorite(Long userid) {
+        return Result.success(favoriteService.getFavorite(userid));
     }
 }
