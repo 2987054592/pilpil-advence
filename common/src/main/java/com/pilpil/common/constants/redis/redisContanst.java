@@ -39,6 +39,9 @@ public interface redisContanst {
          String FANS_FOLLOW_PREFIX = "FANS:FOLLOW:";
          String FANS_FOLLOWER_PREFIX = "FANS:FOLLOWER:";
      }
+     interface Chat{
+         String CHAT_UNREAD_PREFIX = "CHAT:UNREAD:";
+     }
 
 
 }

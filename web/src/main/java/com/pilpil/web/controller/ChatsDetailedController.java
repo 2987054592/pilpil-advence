@@ -1,0 +1,20 @@
+package com.pilpil.web.controller;
+
+
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * <p>
+ * 聊天详情表 前端控制器
+ * </p>
+ *
+ * @author 
+ * @since 2026-05-29
+ */
+@RestController
+@RequestMapping("/chats-detailed")
+public class ChatsDetailedController {
+
+}

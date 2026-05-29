@@ -38,8 +38,8 @@ public class UserController {
         return Result.success(userService.code(email));
     }
     @PostMapping("/login")
-    public Result<UserVo> login(@RequestBody UserDto userDto, HttpServletResponse response){
-        UserVo user=userService.login(userDto,response);
+    public Result<UserVo> login(@RequestBody UserDto userDto, HttpServletResponse response,HttpServletRequest request){
+        UserVo user=userService.login(userDto,response,request);
         return Result.success(user);
     }
     @GetMapping("/exit")

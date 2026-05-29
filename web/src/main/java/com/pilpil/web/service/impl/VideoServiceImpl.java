@@ -38,6 +38,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.pilpil.common.constants.Exception.exceptionConstants.Category.CATEGORY_NOT_EXIST;
+import static com.pilpil.common.constants.Exception.exceptionConstants.User.USER_DELETE_ERROR;
 import static com.pilpil.common.constants.Exception.exceptionConstants.User.USER_STATUS_ERROR;
 import static com.pilpil.common.constants.Exception.exceptionConstants.Video.VIDEO_NOT_EXIST;
 import static com.pilpil.common.constants.Exception.exceptionConstants.Video.VIDEO_STATUS_ERROR;
@@ -161,15 +162,31 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
                     .total(0).build();
         }
         List<VideoData> list5 = videoDataService.lambdaQuery().in(VideoData::getVideoId, videoId).list();
+        Set<Integer> videoIds = list5.stream().map(VideoData::getVideoId).collect(Collectors.toSet());
+        List<Video> list1 = lambdaQuery().in(Video::getId, videoIds).list();
+
+        Map<Integer, Video> videoMap1 = list1.stream().collect(Collectors.toMap(Video::getId, video -> video));
+
+        Set<Long> userIds = list1.stream().map(Video::getAuthorId).collect(Collectors.toSet());
+        List<User> list2 = userService.lambdaQuery().in(User::getId, userIds).list();
+        Map<Long, User> userMap = list2.stream().collect(Collectors.toMap(User::getId, user -> user));
+
         Map<Integer, VideoData> videoMap = list5.stream().collect(Collectors.toMap(VideoData::getVideoId, videoData -> videoData));
         for(VideoDoc videoDoc:list){
 //            VideoData list1 = videoMap.get(videoDoc.getVideoId());
 //            long DanmuCount = list1.getDanmuCount();
 //            long PlayCount = list1.getViewCount();
-            long DanmuCount = Optional.ofNullable(videoMap.get(videoDoc.getVideoId()).getDanmuCount()).orElse(0);
-            long PlayCount = Optional.ofNullable(videoMap.get(videoDoc.getVideoId()).getViewCount()).orElse(0);
+            long DanmuCount = Optional.ofNullable(videoMap.get(videoDoc.getVideoId())).map(VideoData::getDanmuCount).orElse(0);
+            long PlayCount = Optional.ofNullable(videoMap.get(videoDoc.getVideoId())).map(VideoData::getViewCount).orElse(0);
             videoDoc.setPlayCount(PlayCount);
             videoDoc.setDanmakuCount(DanmuCount);
+            VideoData videoData = videoMap.get(videoDoc.getVideoId());
+            if(videoData!=null){
+                Video video = videoMap1.get(videoDoc.getVideoId());
+                if(video!=null){
+                    videoDoc.setAuthorName(Optional.ofNullable(userMap.get(video.getAuthorId())).map(User::getNickName).orElse(USER_DELETE_ERROR));
+                }
+            }
         }
         vo.setVideoDocs(list);
         return vo;
@@ -221,8 +238,8 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         long CoinCount = Optional.ofNullable(data).map(VideoData::getCoinCount).orElse(0);
         long collectCount = Optional.ofNullable(data).map(VideoData::getCollectCount).orElse(0);
         long commentCount = Optional.ofNullable(data).map(VideoData::getCommentCount).orElse(0);
-        int fans=fansService.getFansCount(userId);
-        int follow=fansService.getFollowerCount(userId);
+        int fans=fansService.getFollowerCount(userId);
+        int follow=fansService.getFansCount(userId);
         uservo.setFans(fans);
         uservo.setFollow(follow);
         bean.setAuthorName(user.getNickName());

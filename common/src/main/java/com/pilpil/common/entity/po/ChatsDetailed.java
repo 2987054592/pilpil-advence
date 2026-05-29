@@ -5,15 +5,15 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import java.time.LocalDate;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
-import com.pilpil.common.enums.VideoStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 视频详情表
+ * 聊天详情表
  * </p>
  *
  * @author 
@@ -22,8 +22,8 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("video_detail")
-public class VideoDetail implements Serializable {
+@TableName("chats_detailed")
+public class ChatsDetailed implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -31,45 +31,24 @@ public class VideoDetail implements Serializable {
     private Integer id;
 
     /**
-     * 主视频id
+     * 用户id
      */
-    private Integer videoId;
+    private Long userId;
 
     /**
-     * 排序
+     * 目标id
      */
-    private Integer sort;
+    private Long targetId;
 
     /**
-     * 分p的标题
+     * 内容
      */
-    private String partTime;
+    private String content;
 
     /**
-     * 视频的url地址
+     * 发送的时间
      */
-    private String videoUrl;
-
-    /**
-     * 视频持续时长（秒）
-     */
-    private Long duration;
-
-    /**
-     * 上传时间
-
-     */
-    private LocalDate createTime;
-
-    /**
-     * 0正常，1审核，2封禁
-     */
-    private VideoStatus status;
-
-    /**
-     * 0自制，1转载
-     */
-    private Integer type;
+    private LocalDateTime time;
 
 
 }

@@ -23,7 +23,7 @@ public interface IUserService extends IService<User> {
 
     String code(String email);
 
-    UserVo login(UserDto userDto, HttpServletResponse response);
+    UserVo login(UserDto userDto, HttpServletResponse response,HttpServletRequest request);
 
     void exit(HttpServletRequest request);
 

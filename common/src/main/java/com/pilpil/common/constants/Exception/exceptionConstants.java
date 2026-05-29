@@ -11,6 +11,7 @@ public interface exceptionConstants {
         String EMAIL_NULL = "邮箱不能为空";
         String USER_STATUS_ERROR = "用户状态异常";
         String USER_DELETE_ERROR = "用户已注销或封禁";
+        String LOGIN_EXPIRE="登录已过期";
     }
     interface Category{
         String CATEGORY_EXIST = "分类已存在";

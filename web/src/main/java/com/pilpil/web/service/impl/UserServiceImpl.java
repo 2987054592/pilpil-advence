@@ -97,7 +97,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public UserVo login(UserDto userDto, HttpServletResponse response) {
+    public UserVo login(UserDto userDto, HttpServletResponse response,HttpServletRequest request) {
+
         String password = DigestUtil.md5Hex(userDto.getPassword());
         User user = lambdaQuery().eq(User::getEmail, userDto.getEmail()).eq(User::getPassword, password).one();
         if(user==null){

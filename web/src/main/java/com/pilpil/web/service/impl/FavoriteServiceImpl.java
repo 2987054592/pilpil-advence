@@ -51,15 +51,20 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteMapper, Favorite> i
 
     @Override
     public List<FavoriteVo> getFavorite(Long userId) {
-        List<Favorite> list = lambdaQuery().eq(Favorite::getUserId, userId).list();
-        if (list.isEmpty()) {
-            return Collections.emptyList();
-        }
         Long id=0L;
         UserInfo userInfo = UserHolder.get();
         if(userInfo!=null){
             id=userInfo.getId();
         }
+        if(userId==null&&id!=0){
+            userId=id;
+        }
+        List<Favorite> list = lambdaQuery().eq(Favorite::getUserId, userId).list();
+        if (list.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+
         if(Objects.equals(userId, id)){
             List<FavoriteVo> vo = new ArrayList<>(list.size());
             for (Favorite favorite : list) {

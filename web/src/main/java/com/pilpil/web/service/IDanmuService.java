@@ -2,10 +2,12 @@ package com.pilpil.web.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.pilpil.common.entity.UserInfo;
 import com.pilpil.common.entity.po.Danmu;
 import com.pilpil.web.entity.dto.DanmuDto;
 import com.pilpil.web.entity.dto.queryDanmuDto;
 import com.pilpil.web.entity.vo.DanmuVo;
+import com.pilpil.web.entity.vo.WebDanmuVo;
 
 import java.util.List;
 
@@ -24,4 +26,6 @@ public interface IDanmuService extends IService<Danmu> {
     List<DanmuVo> listDanmu(queryDanmuDto queryDanmuDto);
 
     void deleteDanmu(Integer id);
+
+    void saveDanmuWebsock(WebDanmuVo bean1, UserInfo userInfo);
 }
