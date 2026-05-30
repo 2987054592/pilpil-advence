@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pilpil.common.constants.mq.mqConstans;
 import com.pilpil.common.constants.redis.redisContanst;
 import com.pilpil.common.entity.UserInfo;
+import com.pilpil.common.entity.dto.VideoFansMq;
 import com.pilpil.common.entity.dto.queryVideo;
 import com.pilpil.common.entity.po.*;
 import com.pilpil.common.entity.vo.VideoDetailDto;
@@ -34,7 +35,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.pilpil.common.constants.Exception.exceptionConstants.Category.CATEGORY_NOT_EXIST;
@@ -143,6 +143,13 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
                 mqConstans.Key.VIDEO_KEY,
                 build
         );
+
+
+
+
+
+
+
         video.setDurationTotal(totalDuration.get());
         updateById(video);
         videoDetailService.saveBatch(newDate);

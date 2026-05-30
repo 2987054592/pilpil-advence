@@ -2,8 +2,11 @@ package com.pilpil.web.service.impl;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.pilpil.common.constants.mq.mqConstans;
+import com.pilpil.common.entity.dto.VideoFansMq;
 import com.pilpil.common.entity.po.Comment;
 import com.pilpil.common.entity.po.User;
+import com.pilpil.common.entity.po.Video;
 import com.pilpil.common.enums.CommentTopType;
 import com.pilpil.common.enums.LevelType;
 import com.pilpil.common.enums.StatusType;
@@ -16,7 +19,9 @@ import com.pilpil.web.mapper.CommentMapper;
 import com.pilpil.web.service.ICommentService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.pilpil.web.service.IUserService;
+import com.pilpil.web.service.IVideoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +47,8 @@ import static com.pilpil.common.constants.redis.redisContanst.Comment.COMMENT_TO
 public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> implements ICommentService {
     private final IUserService userService;
     private final StringRedisTemplate redisTemplate;
+    private final RabbitTemplate rabbitTemplate;
+    private final IVideoService videoService;
     private final User user=new User(USER_DELETE_ERROR,"",LevelType.LV0);
     @Override
     public void saveComment(CommentDto commentDto) {
@@ -65,6 +72,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         if(one==null){
             throw new RuntimeException(COMMENT_NOT_EXIST);
         }
+        Long authorId1 = one.getAuthorId();
         String keys=COMMENT_LIST_PREFIX+commentDto.getVideoId();
 //        lambdaUpdate().eq(Comment::getId, targetCommentId)
 //                .setSql("reply_count = reply_count + 1")
@@ -90,6 +98,22 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
                 .replyCount(0)
                 .build();
         this.save(comment);
+
+        if(!authorId1.equals(authorId)){
+            VideoFansMq fansMq = VideoFansMq.builder()
+                    .videoId(commentDto.getVideoId())
+                    .authorId(authorId1)
+                    .userId(authorId)
+                    .build();
+            rabbitTemplate.convertAndSend(
+                    mqConstans.Exchange.COMMENT_REPLAY_EXCHANGE,
+                    mqConstans.Key.COMMENT_REPLAY_KEY,
+                    fansMq
+            );
+        }
+
+
+
     }
 
     private void ToVideo(CommentDto commentDto) {
@@ -109,6 +133,24 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
                 .createTime(LocalDate.now())
                 .build();
         this.save(comment);
+
+        Integer videoId = commentDto.getVideoId();
+        Video video = videoService.lambdaQuery().eq(Video::getId, videoId).one();
+        Long authorId1 = video.getAuthorId();
+
+
+        if(!authorId1.equals(authorId)){
+            VideoFansMq fansMq = VideoFansMq.builder()
+                    .videoId(commentDto.getVideoId())
+                    .authorId(authorId1)
+                    .userId(authorId)
+                    .build();
+            rabbitTemplate.convertAndSend(
+                    mqConstans.Exchange.VIDEO_COMMENT_EXCHANGE,
+                    mqConstans.Key.VIDEO_COMMENT_KEY,
+                    fansMq
+            );
+        }
     }
 
     @Override

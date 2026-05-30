@@ -3,6 +3,8 @@ package com.pilpil.admin.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.pilpil.admin.service.IVideoDataService;
+import com.pilpil.common.constants.mq.mqConstans;
+import com.pilpil.common.entity.dto.VideoFansMq;
 import com.pilpil.common.entity.dto.VideoReview;
 import com.pilpil.admin.mapper.VideoMapper;
 import com.pilpil.admin.service.IVideoService;
@@ -19,6 +21,7 @@ import com.pilpil.common.enums.VideoStatus;
 import com.pilpil.common.exception.illegalException;
 import com.pilpil.common.utils.Escommpent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,6 +46,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     private final VideoDetailServiceImpl videoDetailService;
     private final UserServiceImpl userService;
     private final IVideoDataService videoDataService;
+    private final RabbitTemplate rabbitTemplate;
     @Override
     public VideoDocVo getVideo(queryVideo queryVideo) {
         return escommpent.searchVideo(queryVideo, queryVideo.getPageNum(), queryVideo.getPageSize());
@@ -84,13 +88,33 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         Integer id = videoReview.getId();
         Video video = lambdaQuery().eq(Video::getId, id).one();
         List<VideoDetail> list = videoDetailService.lambdaQuery().eq(VideoDetail::getVideoId, id).list();
-        if(videoReview.getStatus().equals(VideoStatus.BAN)){
-            list.forEach(videoDetail -> videoDetail.setStatus(videoReview.getStatus()));
+        if (videoReview.getStatus().equals(VideoStatus.BAN)) {
+
+            List<Integer> detailIds = list.stream()
+                    .map(VideoDetail::getId)
+                    .toList();
+
+            videoDetailService.lambdaUpdate()
+                    .set(VideoDetail::getStatus, VideoStatus.BAN)
+                    .in(VideoDetail::getId, detailIds)
+                    .update();
         }
-        videoDetailService.updateBatchById(list);
         video.setStatus(videoReview.getStatus());
         updateById( video);
         escommpent.reviewVideo(videoReview);
+
+        if (video.getStatus().equals(VideoStatus.NORMAL)) {
+            VideoFansMq fansMq = VideoFansMq.builder()
+                    .authorId(video.getAuthorId())
+                    .videoId(video.getId())
+                    .build();
+            rabbitTemplate.convertAndSend(
+                    mqConstans.Exchange.VIDEO_FANS_EXCHANGE,
+                    mqConstans.Key.VIDEO_FANS_KEY,
+                    fansMq
+            );
+        }
+
     }
 
     @Override
