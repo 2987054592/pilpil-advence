@@ -1,6 +1,8 @@
 package com.pilpil.web.controller;
 
 
+import com.pilpil.web.service.IPointRecordService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
@@ -14,7 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2026-05-30
  */
 @RestController
-@RequestMapping("/point-record")
+@RequestMapping("/pointRecord")
+@RequiredArgsConstructor
 public class PointRecordController {
+
 
 }

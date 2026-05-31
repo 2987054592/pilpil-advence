@@ -1,6 +1,8 @@
 package com.pilpil.web.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import cn.hutool.json.JSONUtil;
@@ -8,9 +10,12 @@ import com.pilpil.common.constants.Exception.exceptionConstants;
 
 import com.pilpil.common.constants.redis.redisContanst;
 import com.pilpil.common.entity.UserInfo;
+import com.pilpil.common.entity.po.PointRecord;
 import com.pilpil.common.entity.po.User;
+import com.pilpil.common.entity.vo.ExperienceVo;
 import com.pilpil.common.entity.vo.UserVoDetail;
 import com.pilpil.common.enums.LevelType;
+import com.pilpil.common.enums.PointType;
 import com.pilpil.common.enums.SexType;
 import com.pilpil.common.enums.StatusType;
 import com.pilpil.common.exception.illegalException;
@@ -21,6 +26,7 @@ import com.pilpil.common.entity.vo.UserVo;
 
 import com.pilpil.web.mapper.UserMapper;
 import com.pilpil.web.service.IFansService;
+import com.pilpil.web.service.IPointRecordService;
 import com.pilpil.web.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,9 +37,13 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import static com.pilpil.common.constants.Exception.exceptionConstants.Point.POINT_TODAY_ENOUGH;
 import static com.pilpil.common.constants.Exception.exceptionConstants.User.*;
 
 /**
@@ -50,6 +60,7 @@ import static com.pilpil.common.constants.Exception.exceptionConstants.User.*;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
     private final StringRedisTemplate redisTemplate;
     private final IFansService fansService;
+    private final IPointRecordService pointRecordService;
 
     @Override
     public void saveUser(UserDto userDto) {
@@ -195,5 +206,95 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                 .follow(follow)
                 .build();
 
+    }
+
+    @Override
+    public void ExperienceExchange(ExperienceVo experienceVo) {
+        Long userId = experienceVo.getUserId();
+        PointType pointType = experienceVo.getPointType();
+        Integer experience1 = experienceVo.getExperience();
+        Integer maxPoint = pointType.getMaxPoint();
+        DateTime begin = DateUtil.beginOfDay(new Date());
+        DateTime end = DateUtil.endOfDay(new Date());
+        List<PointRecord> list = pointRecordService.lambdaQuery()
+                .eq(PointRecord::getUserId, userId)
+                .between(PointRecord::getCreateTime, begin, end)
+                .eq(PointRecord::getType, pointType)
+                .list();
+        if(!list.isEmpty()){
+            List<Integer> list1 = list.stream().map(PointRecord::getPoints).toList();
+            int sum = list1.stream().mapToInt(Integer::intValue).sum();
+            if(sum>=maxPoint && maxPoint!=0){
+                throw new illegalException(POINT_TODAY_ENOUGH);
+            }else if (sum+experience1>maxPoint){
+                experience1=maxPoint-sum;
+            }
+        }
+        lambdaUpdate()
+                .eq(User::getId, userId)
+                .setSql("experience = IFNULL(experience,0)+"+ experience1)
+                .update();
+        User user = lambdaQuery().eq(User::getId, userId).one();
+        int experience = user.getExperience();
+
+        if(pointType.equals(PointType.SIGN_IN)){
+            lambdaUpdate()
+                    .eq(User::getId, userId)
+                    .setSql("current_coin = IFNULL(current_coin,0)+"+ 10)
+                    .setSql("total_coin = IFNULL(total_coin,0)+"+ 10)
+                    .update();
+        }
+
+
+
+
+
+        if(user.getLevel().equals(LevelType.LV6)){
+            PointRecord pointRecord = new PointRecord();
+            pointRecord.setUserId(userId);
+            pointRecord.setPoints(experience1);
+            pointRecord.setCreateTime(LocalDateTime.now());
+            pointRecord.setType(experienceVo.getPointType());
+            pointRecordService.save(pointRecord);
+            return;
+        }
+
+        if(experience<=200 && experience>=100){
+            lambdaUpdate()
+                    .eq(User::getId, userId)
+                    .set(User::getLevel, LevelType.LV1)
+                    .update();
+        }else if(experience<=300 && experience>=201){
+            lambdaUpdate()
+                    .eq(User::getId, userId)
+                    .set(User::getLevel, LevelType.LV2)
+                    .update();
+        }else if(experience<=400 && experience>=301){
+            lambdaUpdate()
+                    .eq(User::getId, userId)
+                    .set(User::getLevel, LevelType.LV3)
+                    .update();
+        }else if(experience<=500 && experience>=401){
+            lambdaUpdate()
+                    .eq(User::getId, userId)
+                    .set(User::getLevel, LevelType.LV4)
+                    .update();
+        }else if(experience<=600 && experience>=501){
+            lambdaUpdate()
+                    .eq(User::getId, userId)
+                    .set(User::getLevel, LevelType.LV5)
+                    .update();
+        }else if(experience<=1000 && experience>=601){
+            lambdaUpdate()
+                    .eq(User::getId, userId)
+                    .set(User::getLevel, LevelType.LV6)
+                    .update();
+        }
+        PointRecord pointRecord = new PointRecord();
+        pointRecord.setUserId(userId);
+        pointRecord.setPoints(experience1);
+        pointRecord.setCreateTime(LocalDateTime.now());
+        pointRecord.setType(experienceVo.getPointType());
+        pointRecordService.save(pointRecord);
     }
 }

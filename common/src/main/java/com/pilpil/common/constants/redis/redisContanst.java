@@ -42,6 +42,9 @@ public interface redisContanst {
      interface Chat{
          String CHAT_UNREAD_PREFIX = "CHAT:UNREAD:";
      }
+     interface Sign{
+         String SIGN_PREFIX = "SIGN:UID:";
+     }
 
 
 }

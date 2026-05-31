@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.time.LocalDateTime;
 import java.io.Serializable;
+
+import com.pilpil.common.enums.PointType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -38,7 +40,7 @@ public class PointRecord implements Serializable {
 1评论
 2投币
      */
-    private Integer type;
+    private PointType type;
 
     /**
      * 具体多少分

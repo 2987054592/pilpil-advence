@@ -95,7 +95,7 @@ public class FileOperater {
     }
 
     /**
-     * 取消上传（已修复 NoSuchUpload 异常）
+     * 取消上传
      */
     public void abortUpload(String uploadId, String ossKey, String fileId) {
         try {

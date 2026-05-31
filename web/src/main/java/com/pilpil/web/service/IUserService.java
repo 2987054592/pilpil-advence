@@ -1,6 +1,7 @@
 package com.pilpil.web.service;
 
 import com.pilpil.common.entity.po.User;
+import com.pilpil.common.entity.vo.ExperienceVo;
 import com.pilpil.common.entity.vo.UserVoDetail;
 import com.pilpil.web.entity.dto.UserDto;
 
@@ -32,4 +33,6 @@ public interface IUserService extends IService<User> {
     UserVoDetail info(String name);
 
     UserVo infoSimple(String name);
+
+    void ExperienceExchange(ExperienceVo experienceVo);
 }

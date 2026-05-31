@@ -55,10 +55,11 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
     @Override
     public VideoVo getByIdc(Integer id) {
         Video video = lambdaQuery().eq(Video::getId, id).one();
-        User user = userService.getBaseMapper().selectById(video.getAuthorId());
         if(video==null){
             throw new illegalException(VIDEO_NOT_EXIST);
         }
+        User user = userService.getBaseMapper().selectById(video.getAuthorId());
+
 
         List<VideoDetail> list = videoDetailService.lambdaQuery().eq(VideoDetail::getVideoId, id).list();
         List<VideoDetails> videoDetails = BeanUtil.copyToList(list, VideoDetails.class);

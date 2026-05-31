@@ -55,5 +55,9 @@ public class UserNoticeController {
                 .remove();
         return Result.success();
     }
+    @GetMapping("/count")
+    public Result<Long> count(){
+        return Result.success(userNoticeService.counts());
+    }
 
 }

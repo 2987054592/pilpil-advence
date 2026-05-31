@@ -6,6 +6,7 @@ public interface mqConstans {
         String VIDEO_FANS_EXCHANGE = "video.fans.exchange";
         String VIDEO_COMMENT_EXCHANGE = "video.comment.exchange";
         String COMMENT_REPLAY_EXCHANGE = "comment.replay.exchange";
+        String EXPERIENCE_EXCHANGE = "experience.exchange";
 
     }
     public interface Queue{
@@ -14,6 +15,7 @@ public interface mqConstans {
         String VIDEO_FANS_QUEUE = "video.fans.queue";
         String VIDEO_COMMENT_QUEUE = "video.comment.queue";
         String COMMENT_REPLAY_QUEUE = "comment.replay.queue";
+        String EXPERIENCE_QUEUE = "experience.queue";
     }
     public interface Key{
         String VIDEO_KEY = "video.upload.key";
@@ -21,5 +23,7 @@ public interface mqConstans {
         String VIDEO_FANS_KEY = "video.fans.key";
         String VIDEO_COMMENT_KEY = "video.comment.key";
         String COMMENT_REPLAY_KEY = "comment.replay.key";
+        String EXPERIENCE_KEY = "experience.key";
     }
+
 }

@@ -50,4 +50,10 @@ public interface exceptionConstants {
         String FILE_NOT_EXIST = "文件不存在";
         String FILE_IS_EXIST = "文件已存在";
     }
+    interface Sign{
+        String SIGN_EXIST = "已经签到过了";
+    }
+    interface Point{
+        String POINT_TODAY_ENOUGH = "今日积分已满";
+    }
 }

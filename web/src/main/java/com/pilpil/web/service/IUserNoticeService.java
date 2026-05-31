@@ -23,4 +23,6 @@ public interface IUserNoticeService extends IService<UserNotice> {
     void noticeVideoComment(VideoFansMq fansMq);
 
     void receiveComment(VideoFansMq fansMq);
+
+    Long counts();
 }

@@ -1,6 +1,8 @@
 package com.pilpil.web.service.impl;
 
+import com.pilpil.common.entity.UserInfo;
 import com.pilpil.common.entity.dto.VideoFansMq;
+import com.pilpil.common.entity.po.Chats;
 import com.pilpil.common.entity.po.User;
 import com.pilpil.common.entity.po.UserNotice;
 import com.pilpil.common.entity.po.Video;
@@ -9,12 +11,10 @@ import com.pilpil.common.enums.LevelType;
 import com.pilpil.common.enums.NoticeType;
 import com.pilpil.common.utils.UserHolder;
 import com.pilpil.web.entity.dto.FansVo;
+import com.pilpil.web.entity.vo.ChatsVo;
 import com.pilpil.web.mapper.UserNoticeMapper;
-import com.pilpil.web.service.IFansService;
-import com.pilpil.web.service.IUserNoticeService;
+import com.pilpil.web.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.pilpil.web.service.IUserService;
-import com.pilpil.web.service.IVideoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -42,6 +42,7 @@ public class UserNoticeServiceImpl extends ServiceImpl<UserNoticeMapper, UserNot
     private final StringRedisTemplate redisTemplate;
     private final IUserService userService;
     private final IVideoService videoService;
+    private final IChatsService chatsService;
 
     @Transactional
     @Override
@@ -123,5 +124,21 @@ public class UserNoticeServiceImpl extends ServiceImpl<UserNoticeMapper, UserNot
                 .createTime(LocalDate.now())
                 .build();
         save(notice);
+    }
+
+    @Override
+    public Long counts() {
+        UserInfo userInfo = UserHolder.get();
+        if(userInfo==null){
+            return 0L;
+        }
+        Long count = lambdaQuery()
+                .eq(UserNotice::getUserId,userInfo.getId() )
+                .eq(UserNotice::getRead, IsRead.UNREAD)
+                .count();
+        List<ChatsVo> chats = chatsService.getChats();
+        List<Integer> list = chats.stream().map(ChatsVo::getUnread).toList();
+        int sum = list.stream().mapToInt(Integer::intValue).sum();
+        return count+sum;
     }
 }

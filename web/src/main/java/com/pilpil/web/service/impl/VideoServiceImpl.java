@@ -245,8 +245,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         long CoinCount = Optional.ofNullable(data).map(VideoData::getCoinCount).orElse(0);
         long collectCount = Optional.ofNullable(data).map(VideoData::getCollectCount).orElse(0);
         long commentCount = Optional.ofNullable(data).map(VideoData::getCommentCount).orElse(0);
-        int fans=fansService.getFollowerCount(userId);
-        int follow=fansService.getFansCount(userId);
+        int fans=fansService.getFansCount(userId);
+
+        int follow=fansService.getFollowerCount(userId);
         uservo.setFans(fans);
         uservo.setFollow(follow);
         bean.setAuthorName(user.getNickName());
