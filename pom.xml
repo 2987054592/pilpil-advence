@@ -26,6 +26,13 @@
         <java.version>17</java.version>
         <mybatis-plus.version>3.5.14</mybatis-plus.version>
         <elasticsearch.version>7.12.1</elasticsearch.version>
+        <hutool.version>5.8.38</hutool.version>
+        <knife4j.version>4.5.0</knife4j.version>
+        <fastjson.version>1.2.83</fastjson.version>
+        <aliyun-oss.version>3.18.4</aliyun-oss.version>
+        <aliyun-dypnsapi.version>2.0.0</aliyun-dypnsapi.version>
+        <javacv.version>1.5.9</javacv.version>
+
     </properties>
 
     <dependencies>
@@ -37,7 +44,7 @@
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-            <version>5.8.38</version>
+            <version>${hutool.version}</version>
         </dependency>
     </dependencies>
 
@@ -58,6 +65,41 @@
                 <artifactId>lombok</artifactId>
                 <version>1.18.30</version>
                 <optional>true</optional>
+            </dependency>
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+                <version>${knife4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.elasticsearch.client</groupId>
+                <artifactId>elasticsearch-rest-high-level-client</artifactId>
+                <version>${elasticsearch.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.itcast</groupId>
+                <artifactId>common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun.oss</groupId>
+                <artifactId>aliyun-sdk-oss</artifactId>
+                <version>${aliyun-oss.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>dypnsapi20170525</artifactId>
+                <version>${aliyun-dypnsapi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bytedeco</groupId>
+                <artifactId>javacv-platform</artifactId>
+                <version>${javacv.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
