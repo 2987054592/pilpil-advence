@@ -21,5 +21,6 @@ public class VideoDetailDto {
     private String videoUrl;
     private LocalDate createTime;
     private VideoType type;
+    private Integer id;
 
 }

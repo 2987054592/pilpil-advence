@@ -21,6 +21,7 @@ import com.pilpil.common.utils.FileOperater;
 import com.pilpil.common.utils.UserHolder;
 
 import com.pilpil.web.entity.dto.VideoDto;
+import com.pilpil.web.entity.dto.VideoDtoUpdate;
 import com.pilpil.web.entity.vo.MyVideoList;
 import com.pilpil.web.entity.vo.MyVideoVo;
 import com.pilpil.web.mapper.VideoMapper;
@@ -40,8 +41,7 @@ import java.util.stream.Collectors;
 import static com.pilpil.common.constants.Exception.exceptionConstants.Category.CATEGORY_NOT_EXIST;
 import static com.pilpil.common.constants.Exception.exceptionConstants.User.USER_DELETE_ERROR;
 import static com.pilpil.common.constants.Exception.exceptionConstants.User.USER_STATUS_ERROR;
-import static com.pilpil.common.constants.Exception.exceptionConstants.Video.VIDEO_NOT_EXIST;
-import static com.pilpil.common.constants.Exception.exceptionConstants.Video.VIDEO_STATUS_ERROR;
+import static com.pilpil.common.constants.Exception.exceptionConstants.Video.*;
 
 /**
  * <p>
@@ -305,5 +305,164 @@ public class VideoServiceImpl extends ServiceImpl<VideoMapper, Video> implements
         });
         vo.setList(myVideoVos);
         return vo;
+    }
+
+    /**
+     * 前端传递所有id，包括分p的id，不传数据库查出来的则为删除
+     * id为null但有数据的为新增
+     * @param videoDto
+     */
+    @Override
+    public void updateVideo(VideoDtoUpdate videoDto) {
+        Integer videoId = videoDto.getId();
+        Video video = lambdaQuery().eq(Video::getId, videoId).one();
+        if(video==null){
+            throw new illegalException(VIDEO_NOT_EXIST);
+        }
+        Integer categoryId = videoDto.getCategoryId();
+        Category category = categoryService.lambdaQuery().eq(Category::getId, categoryId).one();
+        if (category==null){
+            throw new illegalException(CATEGORY_NOT_EXIST);
+        }
+        updateMainVideo(videoDto);
+        List<VideoDetailDto> newDetailDtos = videoDto.getVideoDetailDtos();
+        if(newDetailDtos==null || newDetailDtos.isEmpty()){
+            videoDetailService.lambdaUpdate()
+                    .eq(VideoDetail::getVideoId, videoId)
+                    .remove();
+            lambdaUpdate().eq(Video::getId, videoId)
+                    .set(Video::getDurationTotal, 0).update();
+            return;
+        }
+        List<VideoDetail> oldDetails = videoDetailService.lambdaQuery()
+                .eq(VideoDetail::getVideoId, videoId).list();
+        Map<Integer, VideoDetail> oldMap = oldDetails.stream().collect(Collectors.toMap(VideoDetail::getId, videoDetail -> videoDetail));
+        List<VideoDetailDto> keepDtos = newDetailDtos.stream().filter(
+                d -> d.getId() != null
+        ).toList();
+        List<Integer> keepIds = keepDtos.stream().map(VideoDetailDto::getId).toList();
+
+        List<VideoDetailDto> newDtos = newDetailDtos.stream().filter(d -> d.getId() == null).toList();
+
+
+
+        Set<Integer> idsToDelte = oldMap.keySet()
+                .stream().filter(id->!keepIds.contains(id))
+                .collect(Collectors.toSet());
+        if(!idsToDelte.isEmpty()) {
+            videoDetailService.lambdaUpdate()
+                    .in(VideoDetail::getId, idsToDelte)
+                    .remove();
+        }
+        List<VideoDetail> toUpadte=new ArrayList<>();
+        for(VideoDetailDto dto:keepDtos){
+            VideoDetail old = oldMap.get(dto.getId());
+            if(old==null){
+                continue;
+            }
+            if(!old.getVideoUrl().equals(dto.getVideoUrl())){
+                throw new illegalException(VIDEO_URLS_PROHIBTED_CHANGE);
+            }
+            boolean needUpdate = false;
+            if(dto.getSort()!=null && old.getSort()!=dto.getSort()){
+                needUpdate = true;
+                old.setSort(dto.getSort());
+            }
+            if(dto.getPartTime()!=null && !old.getPartTime().equals(dto.getPartTime())){
+                needUpdate = true;
+                old.setPartTime(dto.getPartTime());
+            }
+            if(dto.getType() != null && !old.getType().equals(dto.getType())) {
+                needUpdate = true;
+                old.setType(dto.getType());
+            }
+            old.setStatus(VideoStatus.AUDIT);
+            if(needUpdate){
+                toUpadte.add(old);
+            }
+        }
+        if(!toUpadte.isEmpty()){
+            videoDetailService.updateBatchById(toUpadte);
+        }
+
+        List<VideoDetail> toSave=new ArrayList<>();
+        AtomicLong totalDuration = new AtomicLong(0);
+        for(VideoDetail old:oldMap.values()){
+            if(keepIds.contains(old.getId())){
+                totalDuration.addAndGet(old.getDuration());
+            }
+        }
+        for(VideoDetailDto dto:newDtos){
+            VideoDetail videoDetail = BeanUtil.toBean(dto, VideoDetail.class);
+            videoDetail.setVideoId(videoId);
+            String durationKey = redisContanst.Video.DURATION_PREFIX + dto.getMd5();
+            String duration = redisTemplate.opsForValue().get(durationKey);
+            if(duration!=null){
+                videoDetail.setDuration(Long.parseLong(duration));
+                redisTemplate.delete(durationKey);
+            }else{
+                videoDetail.setDuration(0L);
+            }
+            videoDetail.setStatus(VideoStatus.AUDIT);
+            videoDetail.setCreateTime(LocalDate.now());
+            totalDuration.addAndGet(videoDetail.getDuration());
+            toSave.add(videoDetail);
+        }
+        if (!toSave.isEmpty()){
+            videoDetailService.saveBatch(toSave);
+        }
+        lambdaUpdate()
+                .eq(Video::getId, videoId)
+                .set(Video::getDurationTotal, totalDuration.get())
+                .set(Video::getStatus, VideoStatus.AUDIT)
+                .update();
+
+    }
+
+    private void updateMainVideo(VideoDtoUpdate videoDto) {
+        lambdaUpdate()
+                .eq(Video::getId, videoDto.getId())
+                .set(videoDto.getName() != null, Video::getName, videoDto.getName())
+                .set(videoDto.getCategoryId() != null, Video::getCategoryId, videoDto.getCategoryId())
+                .set(videoDto.getCover() != null, Video::getCover, videoDto.getCover())
+                .set(videoDto.getDesc() != null, Video::getDesc, videoDto.getDesc())
+                .set(videoDto.getType() != null, Video::getType, videoDto.getType())
+                .set(videoDto.getTags() != null, Video::getTags, videoDto.getTags())
+                .update();
+    }
+
+    @Override
+    public VideoDtoUpdate updateInfo(Integer videoId) {
+        Video video = lambdaQuery().eq(Video::getId, videoId).one();
+        if(video==null){
+            throw new illegalException(VIDEO_NOT_EXIST);
+        }
+        List<VideoDetail> videoDetails = videoDetailService.lambdaQuery().eq(VideoDetail::getVideoId, videoId).list();
+        if(videoDetails==null|| videoDetails.isEmpty()){
+            throw new illegalException(VIDEO_NOT_EXIST);
+        }
+        VideoDtoUpdate vo = BeanUtil.toBean(video, VideoDtoUpdate.class);
+        List<VideoDetailDto> dtos = BeanUtil.copyToList(videoDetails, VideoDetailDto.class);
+        vo.setVideoDetailDtos(dtos);
+        return vo;
+
+    }
+
+    @Override
+    public void deleteVideo(Integer videoId) {
+        Video video = lambdaQuery().eq(Video::getId, videoId).one();
+        if (video == null) {
+            throw new illegalException(VIDEO_NOT_EXIST);
+        }
+        Long authorId = video.getAuthorId();
+        Long userId = UserHolder.get().getId();
+        if(!userId.equals(authorId)){
+            throw new illegalException(VIDEO_OWNER_ERROR);
+        }
+        escommpent.deleteVideo(videoId);
+        lambdaUpdate().eq(Video::getId, videoId).remove();
+        videoDetailService.lambdaUpdate().eq(VideoDetail::getVideoId, videoId).remove();
+        videoDataService.lambdaUpdate().eq(VideoData::getVideoId, videoId).remove();
+
     }
 }

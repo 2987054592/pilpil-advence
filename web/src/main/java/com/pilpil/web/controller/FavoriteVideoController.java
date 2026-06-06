@@ -33,4 +33,10 @@ public class FavoriteVideoController {
     public Result<List<FavoriteVideoVo>> getFavoriteVideoList(Integer favoriteId){
         return Result.success(favoriteVideoService.getFavoriteVideoList(favoriteId));
     }
+    @DeleteMapping
+    public Result deleteFavoriteVideo(Integer favoriteId){
+        favoriteVideoService.lambdaUpdate().eq(FavoriteVideo::getFavoriteId, favoriteId).remove();
+        return Result.success();
+    }
+
 }

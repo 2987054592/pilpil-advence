@@ -7,6 +7,7 @@ import com.pilpil.web.entity.dto.UserDto;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.pilpil.common.entity.vo.UserVo;
+import com.pilpil.web.entity.dto.UserUpdateDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -35,4 +36,10 @@ public interface IUserService extends IService<User> {
     UserVo infoSimple(String name);
 
     void ExperienceExchange(ExperienceVo experienceVo);
+
+    void updateUser(UserUpdateDto userDto);
+
+    void deleteUser();
+
+    UserUpdateDto updateInfo();
 }

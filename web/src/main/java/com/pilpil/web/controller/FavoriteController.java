@@ -37,4 +37,14 @@ public class FavoriteController {
     public Result<List<FavoriteVo>> getFavorite(Long userid) {
         return Result.success(favoriteService.getFavorite(userid));
     }
+    @PostMapping
+    public Result updateFavorite(@RequestBody FavoriteDto favoriteDto){
+        favoriteService.updateFavorite(favoriteDto);
+        return Result.success();
+    }
+    @DeleteMapping
+    public Result deleteFavorite(@RequestParam Integer id){
+        favoriteService.deleteFavorite(id);
+        return Result.success();
+    }
 }

@@ -13,6 +13,7 @@ import com.pilpil.web.entity.vo.FavoriteVo;
 import com.pilpil.web.mapper.FavoriteMapper;
 import com.pilpil.web.service.IFavoriteService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.pilpil.web.service.IFavoriteVideoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,7 @@ import static com.pilpil.common.constants.Exception.exceptionConstants.Favorite.
 @Service
 @RequiredArgsConstructor
 public class FavoriteServiceImpl extends ServiceImpl<FavoriteMapper, Favorite> implements IFavoriteService {
+    private final IFavoriteVideoService favoriteVideoService;
     @Override
     public void saveFavorite(FavoriteDto favoriteDto) {
         Favorite one = lambdaQuery().eq(Favorite::getUserId, UserHolder.get().getId())
@@ -88,5 +90,21 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteMapper, Favorite> i
             vo.add(build);
         }
         return vo;
+    }
+
+    @Override
+    public void updateFavorite(FavoriteDto favoriteDto) {
+       lambdaUpdate().eq(Favorite::getId, favoriteDto.getId())
+               .set(favoriteDto.getName()!=null,Favorite::getName, favoriteDto.getName())
+               .set(favoriteDto.getDesc()!=null,Favorite::getDesc, favoriteDto.getDesc())
+               .set(favoriteDto.getVisible()!=null,Favorite::getVisible, favoriteDto.getVisible())
+               .set(favoriteDto.getCover()!=null,Favorite::getCover, favoriteDto.getCover())
+               .update();
+    }
+
+    @Override
+    public void deleteFavorite(Integer id) {
+        favoriteVideoService.lambdaUpdate().eq(FavoriteVideo::getFavoriteId, id).remove();
+        lambdaUpdate().eq(Favorite::getId, id).remove();
     }
 }

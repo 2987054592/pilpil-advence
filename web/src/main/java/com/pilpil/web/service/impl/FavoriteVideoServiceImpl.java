@@ -87,6 +87,7 @@ public class FavoriteVideoServiceImpl extends ServiceImpl<FavoriteVideoMapper, F
     public List<FavoriteVideoVo> getFavoriteVideoList(Integer favoriteId) {
         Favorite favorite = favoriteService.lambdaQuery()
                 .eq(Favorite::getId, favoriteId).one();
+
         if(favorite == null){
             throw new illegalException(FAVORITE_NOT_EXIST);
         }
@@ -133,4 +134,5 @@ public class FavoriteVideoServiceImpl extends ServiceImpl<FavoriteVideoMapper, F
         }
         return vo;
     }
+
 }

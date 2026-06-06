@@ -23,6 +23,8 @@ public interface exceptionConstants {
         String VIDEO_STATUS_ERROR = "视频未审核或封禁";
         String MAIN_VIDEO_STATUS_ERROR = "主视频未审核或封禁";
         String VIDEO_DELETE_ERROR = "视频已删除";
+        String VIDEO_URLS_PROHIBTED_CHANGE = "视频链接不允许修改";
+        String VIDEO_OWNER_ERROR = "视频不属于当前用户";
     }
     interface Danmu{
         String DAMU_NOT_OWNER = "弹幕不属于当前用户";
@@ -30,6 +32,7 @@ public interface exceptionConstants {
     }
     interface Comment{
         String COMMENT_NOT_EXIST = "评论不存在";
+        String COMMENT_NOT_AUTHOR = "评论不属于当前用户";
     }
     interface Like{
         String LIKE_NOT_EXIST = "点赞不存在";

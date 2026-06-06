@@ -22,4 +22,6 @@ public interface IFavoriteVideoService extends IService<FavoriteVideo> {
     void addFavoriteVideo(FavoriteVideoDto favoriteVideoDto);
 
     List<FavoriteVideoVo> getFavoriteVideoList(Integer favoriteId);
+
+
 }

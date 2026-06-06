@@ -21,4 +21,6 @@ public interface ICommentService extends IService<Comment> {
 
 
     QueryCommentVo getComment(QueryCommentDto queryCommentDto);
+
+    void deleteComment(Long commentId);
 }

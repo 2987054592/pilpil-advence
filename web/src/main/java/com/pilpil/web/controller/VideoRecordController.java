@@ -44,5 +44,10 @@ public class VideoRecordController {
     public Result<ListVideoRecordVo> getVideoRecordList(@RequestBody VideoRecordDtoWeb videoRecordDto){
         return Result.success(videoRecordService.getVideoRecordList(videoRecordDto));
     }
+    @DeleteMapping
+    public Result delteRecord(Integer id){
+        videoRecordService.removeById(id);
+        return Result.success();
+    }
 
 }

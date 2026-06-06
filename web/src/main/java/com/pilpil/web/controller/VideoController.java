@@ -5,6 +5,7 @@ import com.pilpil.common.entity.Result;
 import com.pilpil.common.entity.dto.queryVideo;
 import com.pilpil.common.entity.vo.VideoDocVo;
 import com.pilpil.common.entity.vo.VideoVo;
+import com.pilpil.web.entity.dto.VideoDtoUpdate;
 import com.pilpil.web.entity.vo.MyVideoList;
 import com.pilpil.web.entity.vo.MyVideoVo;
 import com.pilpil.web.entity.dto.VideoDto;
@@ -46,4 +47,19 @@ public class VideoController {
     public Result<MyVideoList> getMyVideo(@RequestBody queryVideo queryVideo){
         return Result.success(videoService.getMyVideo(queryVideo));
     }
+    @PostMapping("/update")
+    public Result updateVideo(@RequestBody VideoDtoUpdate videoDto){
+        videoService.updateVideo(videoDto);
+        return Result.success();
+    }
+    @GetMapping("/updateinfo")
+    public Result<VideoDtoUpdate> updateInfo(Integer videoId){
+        return Result.success(videoService.updateInfo(videoId));
+    }
+    @DeleteMapping
+    public Result deleteVideo(Integer videoId){
+        videoService.deleteVideo(videoId);
+        return Result.success();
+    }
+
 }

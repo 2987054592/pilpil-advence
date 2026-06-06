@@ -23,7 +23,6 @@ import static com.pilpil.common.constants.Exception.exceptionConstants.File.FILE
 @RequiredArgsConstructor
 public class FileController {
     private final FileOperater fileOperater;
-    private final VideoDetailMapper videoDetailMapper;
     @PostMapping("/init")
     public Result initUpload(@RequestParam String fileName,
                              @RequestParam String md5){

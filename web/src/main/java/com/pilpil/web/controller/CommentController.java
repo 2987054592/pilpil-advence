@@ -31,4 +31,9 @@ public class CommentController {
     public Result<QueryCommentVo> getComment(@RequestBody QueryCommentDto queryCommentDto){
         return Result.success(commentService.getComment(queryCommentDto));
     }
+    @DeleteMapping("/delete")
+    public Result deleteComment(@RequestParam Long commentId){
+        commentService.deleteComment(commentId);
+        return Result.success();
+    }
 }

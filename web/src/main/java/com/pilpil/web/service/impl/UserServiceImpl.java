@@ -24,6 +24,7 @@ import com.pilpil.web.entity.dto.UserDto;
 
 import com.pilpil.common.entity.vo.UserVo;
 
+import com.pilpil.web.entity.dto.UserUpdateDto;
 import com.pilpil.web.mapper.UserMapper;
 import com.pilpil.web.service.IFansService;
 import com.pilpil.web.service.IPointRecordService;
@@ -225,7 +226,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             List<Integer> list1 = list.stream().map(PointRecord::getPoints).toList();
             int sum = list1.stream().mapToInt(Integer::intValue).sum();
             if(sum>=maxPoint && maxPoint!=0){
-                throw new illegalException(POINT_TODAY_ENOUGH);
+                experience1=0;
             }else if (sum+experience1>maxPoint){
                 experience1=maxPoint-sum;
             }
@@ -244,10 +245,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                     .setSql("total_coin = IFNULL(total_coin,0)+"+ 10)
                     .update();
         }
-
-
-
-
 
         if(user.getLevel().equals(LevelType.LV6)){
             PointRecord pointRecord = new PointRecord();
@@ -296,5 +293,57 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         pointRecord.setCreateTime(LocalDateTime.now());
         pointRecord.setType(experienceVo.getPointType());
         pointRecordService.save(pointRecord);
+    }
+
+    @Override
+    public void updateUser(UserUpdateDto userDto) {
+        Integer id = userDto.getId();
+        String password = userDto.getPassword();
+        if(password!=null){
+            password=DigestUtil.md5Hex(password);
+        }
+        User user = lambdaQuery().eq(User::getId, id).one();
+        if(user==null){
+            throw new illegalException(exceptionConstants.User.USER_NOT_EXIST);
+        }
+        String email = userDto.getEmail();
+        String nickName = userDto.getNickName();
+        boolean exists = lambdaQuery()
+                .eq(User::getEmail, email)
+                .or()
+                .eq(User::getNickName, nickName)
+                .ne(User::getId, user.getId())
+                .exists();
+
+        if( exists){
+            throw new illegalException(exceptionConstants.User.USER_EXIST);
+        }
+        lambdaUpdate()
+                .eq(User::getId, id)
+                .set(userDto.getEmail()!=null,User::getEmail, userDto.getEmail())
+                .set(userDto.getNickName()!=null,User::getNickName, userDto.getNickName())
+                .set(userDto.getAvatar()!=null,User::getAvatar, userDto.getAvatar())
+                .set(userDto.getSex()!=null,User::getSex, userDto.getSex())
+                .set(userDto.getIntroduce()!=null,User::getIntroduction, userDto.getIntroduce())
+                .set(userDto.getBackground()!=null,User::getBackground, userDto.getBackground())
+                .set(password!=null,User::getPassword, password)
+                .update();
+    }
+
+    @Override
+    public void deleteUser() {
+        Long userId = UserHolder.get().getId();
+        lambdaUpdate()
+                .eq(User::getId, userId)
+                .remove();
+    }
+
+    @Override
+    public UserUpdateDto updateInfo() {
+        Long userId = UserHolder.get().getId();
+        User user = lambdaQuery().eq(User::getId, userId).one();
+        UserUpdateDto vo = BeanUtil.toBean(user, UserUpdateDto.class);
+        return vo;
+
     }
 }

@@ -6,6 +6,7 @@ import com.pilpil.common.entity.vo.UserVoDetail;
 import com.pilpil.web.entity.dto.UserDto;
 
 import com.pilpil.common.entity.vo.UserVo;
+import com.pilpil.web.entity.dto.UserUpdateDto;
 import com.pilpil.web.service.IUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -59,5 +60,19 @@ public class UserController {
     @GetMapping("/info/simple")
     public Result<UserVo> infoSimple(String name){
         return Result.success(userService.infoSimple(name));
+    }
+    @PostMapping("/update")
+    public Result updateUser(@RequestBody UserUpdateDto userDto){
+        userService.updateUser(userDto);
+        return Result.success();
+    }
+    @DeleteMapping("/delete")
+    public Result deleteUser(){
+        userService.deleteUser();
+        return Result.success();
+    }
+    @GetMapping("/updateInfo")
+    public Result<UserUpdateDto> updateInfo(){
+        return Result.success(userService.updateInfo());
     }
 }

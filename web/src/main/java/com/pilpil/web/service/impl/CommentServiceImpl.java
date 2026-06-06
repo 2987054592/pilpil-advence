@@ -1,6 +1,7 @@
 package com.pilpil.web.service.impl;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pilpil.common.constants.mq.mqConstans;
 import com.pilpil.common.entity.dto.VideoFansMq;
@@ -10,6 +11,7 @@ import com.pilpil.common.entity.po.Video;
 import com.pilpil.common.enums.CommentTopType;
 import com.pilpil.common.enums.LevelType;
 import com.pilpil.common.enums.StatusType;
+import com.pilpil.common.exception.illegalException;
 import com.pilpil.common.utils.UserHolder;
 import com.pilpil.web.entity.dto.CommentDto;
 import com.pilpil.web.entity.dto.QueryCommentDto;
@@ -29,6 +31,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.pilpil.common.constants.Exception.exceptionConstants.Comment.COMMENT_NOT_AUTHOR;
 import static com.pilpil.common.constants.Exception.exceptionConstants.Comment.COMMENT_NOT_EXIST;
 import static com.pilpil.common.constants.Exception.exceptionConstants.User.USER_DELETE_ERROR;
 import static com.pilpil.common.constants.redis.redisContanst.Comment.COMMENT_LIST_PREFIX;
@@ -254,5 +257,28 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         }).toList();
         vo.setCommentList( list);
         return vo;
+    }
+
+    @Override
+    public void deleteComment(Long commentId) {
+        Comment comment = lambdaQuery().eq(Comment::getId, commentId).one();
+        if(comment==null){
+            throw new illegalException(COMMENT_NOT_EXIST);
+        }
+
+        Long authorId = comment.getAuthorId();
+        Long userId = UserHolder.get().getId();
+        if(!userId.equals(authorId)){
+            throw new illegalException(COMMENT_NOT_AUTHOR);
+        }
+        int deleteCount = lambdaUpdate().getBaseMapper().delete(
+                new LambdaQueryWrapper<Comment>()
+                        .eq(Comment::getRootId, commentId)
+        );
+        int delete = lambdaUpdate().getBaseMapper().deleteById(commentId);
+        int totalDeleteCount=delete+deleteCount;
+
+
+
     }
 }

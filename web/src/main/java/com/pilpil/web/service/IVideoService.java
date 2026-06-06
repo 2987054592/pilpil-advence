@@ -7,6 +7,7 @@ import com.pilpil.common.entity.po.Video;
 import com.pilpil.common.entity.vo.VideoDocVo;
 import com.pilpil.common.entity.vo.VideoVo;
 import com.pilpil.web.entity.dto.VideoDto;
+import com.pilpil.web.entity.dto.VideoDtoUpdate;
 import com.pilpil.web.entity.vo.MyVideoList;
 
 /**
@@ -26,4 +27,10 @@ public interface IVideoService extends IService<Video> {
     VideoVo getByIdc(Integer id);
 
     MyVideoList getMyVideo(queryVideo queryVideo);
+
+    void updateVideo(VideoDtoUpdate videoDto);
+
+    VideoDtoUpdate updateInfo(Integer videoId);
+
+    void deleteVideo(Integer videoId);
 }

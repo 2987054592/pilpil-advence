@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 
 import com.pilpil.common.enums.VideoStatus;
+import com.pilpil.common.enums.VideoType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -69,7 +70,7 @@ public class VideoDetail implements Serializable {
     /**
      * 0自制，1转载
      */
-    private Integer type;
+    private VideoType type;
 
 
 }

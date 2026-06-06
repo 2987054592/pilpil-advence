@@ -15,4 +15,5 @@ public class FavoriteDto {
     private String name;
     private String desc;
     private FavoriteShowType visible;
+    private Integer id;
 }

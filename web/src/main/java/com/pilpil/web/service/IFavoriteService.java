@@ -21,4 +21,8 @@ public interface IFavoriteService extends IService<Favorite> {
     void saveFavorite(FavoriteDto favoriteDto);
 
     List<FavoriteVo> getFavorite(Long userId);
+
+    void updateFavorite(FavoriteDto favoriteDto);
+
+    void deleteFavorite(Integer id);
 }
