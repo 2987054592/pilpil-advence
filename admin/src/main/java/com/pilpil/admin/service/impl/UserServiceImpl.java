@@ -3,7 +3,9 @@ package com.pilpil.admin.service.impl;
 
 import cn.hutool.crypto.digest.DigestUtil;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pilpil.admin.entity.dto.UserDto;
+import com.pilpil.admin.entity.vo.QueryUser;
 import com.pilpil.admin.mapper.UserMapper;
 import com.pilpil.admin.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -15,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -49,5 +53,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             return true;
         }
         return false;
+    }
+
+    @Override
+    public QueryUser QueryPageUser(Integer pageNum, Integer pageSize) {
+        QueryUser queryUser = new QueryUser();
+        Page<User> page = lambdaQuery().page(new Page<>(pageNum, pageSize));
+        if(page.getRecords()==null|| page.getRecords().isEmpty()){
+            queryUser.setUserList(Collections.emptyList());
+            queryUser.setTotalPage(0);
+            queryUser.setTotalCount(0);
+            return queryUser;
+        }
+        queryUser.setUserList(page.getRecords());
+        queryUser.setTotalPage((int) page.getPages());
+        queryUser.setTotalCount((int)page.getTotal());
+        return queryUser;
     }
 }
