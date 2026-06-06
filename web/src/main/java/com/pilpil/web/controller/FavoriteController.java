@@ -37,7 +37,7 @@ public class FavoriteController {
     public Result<List<FavoriteVo>> getFavorite(Long userid) {
         return Result.success(favoriteService.getFavorite(userid));
     }
-    @PostMapping
+    @PostMapping("/update")
     public Result updateFavorite(@RequestBody FavoriteDto favoriteDto){
         favoriteService.updateFavorite(favoriteDto);
         return Result.success();

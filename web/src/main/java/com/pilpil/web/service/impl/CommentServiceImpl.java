@@ -8,6 +8,7 @@ import com.pilpil.common.entity.dto.VideoFansMq;
 import com.pilpil.common.entity.po.Comment;
 import com.pilpil.common.entity.po.User;
 import com.pilpil.common.entity.po.Video;
+import com.pilpil.common.enums.CommentStatus;
 import com.pilpil.common.enums.CommentTopType;
 import com.pilpil.common.enums.LevelType;
 import com.pilpil.common.enums.StatusType;
@@ -262,23 +263,27 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     @Override
     public void deleteComment(Long commentId) {
         Comment comment = lambdaQuery().eq(Comment::getId, commentId).one();
-        if(comment==null){
+        if (comment == null) {
             throw new illegalException(COMMENT_NOT_EXIST);
         }
-
+        Video video = videoService.lambdaQuery().eq(Video::getId, comment.getVideoId()).one();
         Long authorId = comment.getAuthorId();
         Long userId = UserHolder.get().getId();
-        if(!userId.equals(authorId)){
+        if (!userId.equals(authorId) && !UserHolder.get().getId().equals(video.getAuthorId())) {
             throw new illegalException(COMMENT_NOT_AUTHOR);
         }
-        int deleteCount = lambdaUpdate().getBaseMapper().delete(
-                new LambdaQueryWrapper<Comment>()
-                        .eq(Comment::getRootId, commentId)
-        );
-        int delete = lambdaUpdate().getBaseMapper().deleteById(commentId);
-        int totalDeleteCount=delete+deleteCount;
+        lambdaUpdate().eq(Comment::getId, commentId)
+                .set(Comment::getContent, "该评论已被删除")
+                .set(Comment::getStatus, CommentStatus.DELETE).update();
 
-
-
+        String key = COMMENT_LIST_PREFIX + comment.getVideoId();
+        redisTemplate.opsForHash().increment(key, COMMENT_TOTAL, -1);
+        if (comment.getTargetCommentId() != null && comment.getTargetCommentId() > 0) {
+            redisTemplate.opsForHash().increment(key, comment.getTargetCommentId().toString(), -1);
+        }
+        if (comment.getRootId() != null && comment.getRootId() > 0
+                && !comment.getRootId().equals(comment.getTargetCommentId())) {
+            redisTemplate.opsForHash().increment(key, comment.getRootId().toString(), -1);
+        }
     }
 }

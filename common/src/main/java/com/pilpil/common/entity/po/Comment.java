@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import com.pilpil.common.enums.CommentStatus;
 import com.pilpil.common.enums.CommentTopType;
 import lombok.Builder;
 import lombok.Data;
@@ -80,6 +81,11 @@ public class Comment implements Serializable {
      * 评论时间
      */
     private LocalDate createTime;
+
+    /*
+    评论状态，0正常，1删除
+    */
+    private CommentStatus status;
 
 
 }

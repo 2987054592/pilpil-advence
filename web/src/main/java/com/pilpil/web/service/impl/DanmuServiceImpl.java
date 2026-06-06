@@ -138,7 +138,8 @@ public class DanmuServiceImpl extends ServiceImpl<DanmuMapper, Danmu> implements
         if(danmu==null){
             throw new illegalException(DANMU_NOT_EXIST);
         }
-        if(!danmu.getUserId().equals(userId)){
+        Video video = videoMapper.selectById(danmu.getVideoId());
+        if(!danmu.getUserId().equals(userId) && !userId.equals(video.getAuthorId())){
             throw new illegalException(DAMU_NOT_OWNER);
         }
         Integer sectionId = danmu.getSectionId();
